@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherEase — Home</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#00796b">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/weather-180.png">
+</head>
+<body>
+  <div class="home-container">
+    <h1>WeatherEase</h1>
+    <p>Quick access to your weather, settings, or exit the app.</p>
+
+    <div class="dashboard-buttons">
+      <button id="home-weather" class="home-button">
+        <i class="fas fa-cloud-sun"></i><br/>Get Weather
+      </button>
+      <button id="home-settings" class="home-button">
+        <i class="fas fa-cog"></i><br/>Settings
+      </button>
+      <button id="home-exit" class="home-button">
+        <i class="fas fa-sign-out-alt"></i><br/>Exit
+      </button>
+    </div>
+
+    <div id="quick-temp-readout" aria-live="polite" style="text-align:center;margin-top:.75rem;font-weight:600;">—</div>
+    <div id="voice-status">Voice status will appear here…</div>
+  </div>
+
+  <script src="voice-control.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

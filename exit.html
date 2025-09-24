@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeatherEase — Exit</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <h1>Thank you for using WeatherEase!</h1>
+  <p>Closing app now...</p>
+  <div id="voice-status">Voice status will appear here…</div>
+</main>
+
+<script>
+if (window.speechSynthesis) {
+  const utter = new SpeechSynthesisUtterance("Thank you for using WeatherEase, your easy breezy forecast! Closing app now.");
+  window.speechSynthesis.speak(utter);
+}
+</script>
+</body>
+</html>

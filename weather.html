@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeatherEase — Weather</title>
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#00796b"/>
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<header>
+  <nav>
+    <button onclick="window.location.href='index.html'">Home</button>
+    <button onclick="window.location.href='settings.html'">Settings</button>
+    <button onclick="window.location.href='exit.html'">Exit</button>
+  </nav>
+</header>
+
+<main>
+  <h2>Current Weather</h2>
+
+  <form id="location-form" aria-label="Location form">
+    <input id="search" type="search" placeholder="City or ZIP">
+    <button type="button" id="geo-btn">Use my location</button>
+    <button type="submit">Search</button>
+  </form>
+
+  <div id="current-card">
+    <p><strong>Location:</strong> <span data-field="place">—</span></p>
+    <p><strong>Temperature:</strong> <span data-field="temp">—</span></p>
+    <p><strong>Feels like:</strong> <span data-field="feels">—</span></p>
+    <p><strong>Condition:</strong> <span data-field="desc">—</span></p>
+    <p><strong>Humidity:</strong> <span data-field="humidity">—</span></p>
+    <p><strong>Wind:</strong> <span data-field="wind">—</span></p>
+  </div>
+
+  <h2>5-Day Forecast</h2>
+  <ul id="forecast-list">
+    <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+    <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+    <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+    <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+    <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+  </ul>
+
+  <div id="current-status" aria-live="polite">Ready.</div>
+</main>
+
+<script src="voice-control.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
+

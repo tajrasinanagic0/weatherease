@@ -1,0 +1,12 @@
+{
+  "name": "WeatherEase",
+  "short_name": "WeatherEase",
+  "start_url": "index.html",
+  "display": "standalone",
+  "theme_color": "#00796b",
+  "background_color": "#ffffff",
+  "icons": [
+    { "src": "icons/weather-72.png", "sizes": "72x72", "type": "image/png" },
+    { "src": "icons/weather-180.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
