@@ -7,17 +7,17 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main>
-  <h1>Thank you for using WeatherEase!</h1>
-  <p>Closing app now...</p>
-  <div id="voice-status">Voice status will appear here…</div>
-</main>
+<h1>Thank you for using WeatherEase!</h1>
+<p>Closing app now…</p>
 
 <script>
-if (window.speechSynthesis) {
-  const utter = new SpeechSynthesisUtterance("Thank you for using WeatherEase, your easy breezy forecast! Closing app now.");
-  window.speechSynthesis.speak(utter);
-}
+const synth = window.speechSynthesis;
+const utter = new SpeechSynthesisUtterance("Thank you for using WeatherEase, your easy breezy forecast! Closing app now.");
+synth.speak(utter);
+
+// Optionally close window after 3 seconds
+setTimeout(()=>{ window.close(); }, 3000);
 </script>
 </body>
 </html>
+

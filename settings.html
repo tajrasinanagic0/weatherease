@@ -7,19 +7,26 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main>
-  <h2>Settings & Accessibility</h2>
-  <form>
-    <label><input type="checkbox" id="dark-mode"> Dark mode</label>
-    <label><input type="checkbox" id="big-text"> Larger text</label>
-    <label><input type="checkbox" id="high-contrast"> High contrast</label>
-    <label><input type="checkbox" id="voice"> Enable voice commands</label>
-    <div id="voice-status">Voice status will appear here…</div>
-  </form>
-</main>
+  <h1>Settings & Accessibility</h1>
+
+  <label>
+    <input type="checkbox" id="dark-mode"> Dark Mode
+  </label>
+  <label>
+    <input type="checkbox" id="big-text"> Larger Text
+  </label>
+  <label>
+    <input type="checkbox" id="high-contrast"> High Contrast
+  </label>
+  <label>
+    <input type="checkbox" id="voice"> Enable Voice Commands
+  </label>
+  <div id="voice-status">Voice status: off</div>
+
+  <button onclick="window.location.href='index.html'">Back to Home</button>
 
 <script src="voice-control.js"></script>
-<script src="script.js"></script>
 </body>
 </html>
+
 
