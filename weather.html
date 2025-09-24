@@ -1,52 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WeatherEase — Weather</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherEase — Weather</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json?v=3">
 </head>
 <body>
-<header>
-  <nav>
-    <button onclick="window.location.href='index.html'">Home</button>
-    <button onclick="window.location.href='settings.html'">Settings</button>
-    <button onclick="window.location.href='exit.html'">Exit</button>
-  </nav>
-</header>
+  <header role="banner">
+    <div class="wrap">
+      <h1>WeatherEase Weather</h1>
+      <nav aria-label="Primary">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="exit.html">Exit</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-<main>
-  <h2>Current Weather</h2>
-  <form id="location-form">
-    <input type="search" id="search" placeholder="City or ZIP">
-    <button type="button" id="geo-btn">Use My Location</button>
-    <button type="submit" id="get-temp-btn">Get Temp</button>
-  </form>
+  <main id="content" role="main">
+    <!-- Current Weather -->
+    <section id="current" aria-labelledby="current-heading">
+      <h2 id="current-heading">Current Conditions</h2>
 
-  <div id="current-card">
-    <p>Location: <span data-field="place">—</span></p>
-    <p>Temp: <span data-field="temp">—</span></p>
-    <p>Feels like: <span data-field="feels">—</span></p>
-    <p>Condition: <span data-field="desc">—</span></p>
-    <p>Humidity: <span data-field="humidity">—</span></p>
-    <p>Wind: <span data-field="wind">—</span></p>
-  </div>
+      <!-- Search Row -->
+      <form id="location-form" aria-label="Choose location" style="display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;">
+        <div>
+          <label for="search">City or ZIP</label>
+          <input id="search" name="search" type="search" placeholder="e.g., Brooklyn, NY or 11210" />
+        </div>
+        <button type="button" id="geo-btn">Use my location</button>
+        <button type="submit" id="search-btn">Search</button>
+        <button type="button" id="get-temp-btn">Get Temp</button>
+      </form>
 
-  <h2>5-Day Forecast</h2>
-  <ul id="forecast-list">
-    <li><strong data-day>—</strong><br><span data-high>—</span>/<span data-low>—</span><br><span data-desc>—</span></li>
-    <li><strong data-day>—</strong><br><span data-high>—</span>/<span data-low>—</span><br><span data-desc>—</span></li>
-    <li><strong data-day>—</strong><br><span data-high>—</span>/<span data-low>—</span><br><span data-desc>—</span></li>
-    <li><strong data-day>—</strong><br><span data-high>—</span>/<span data-low>—</span><br><span data-desc>—</span></li>
-    <li><strong data-day>—</strong><br><span data-high>—</span>/<span data-low>—</span><br><span data-desc>—</span></li>
-  </ul>
-</main>
+      <div id="current-card" role="group" aria-label="Current conditions card">
+        <p><strong>Location:</strong> <span data-field="place">—</span></p>
+        <p><strong>Temperature:</strong> <span data-field="temp">—</span></p>
+        <p><strong>Feels like:</strong> <span data-field="feels">—</span></p>
+        <p><strong>Condition:</strong> <span data-field="desc">—</span></p>
+        <p><strong>Humidity:</strong> <span data-field="humidity">—</span></p>
+        <p><strong>Wind:</strong> <span data-field="wind">—</span></p>
+      </div>
 
-<div id="voice-status">Voice status: off</div>
+      <div aria-live="polite" aria-atomic="true" id="current-status" style="opacity:.8;">Ready.</div>
+    </section>
 
-<script src="script.js"></script>
-<script src="voice-control.js"></script>
+    <!-- 5-Day Forecast -->
+    <section id="forecast" aria-labelledby="forecast-heading">
+      <h2 id="forecast-heading">5-Day Forecast</h2>
+      <ul id="forecast-list" aria-label="Daily forecast" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:.75rem; list-style:none; padding:0; margin:0;">
+        <li class="day" aria-label="Day 1"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+        <li class="day" aria-label="Day 2"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+        <li class="day" aria-label="Day 3"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+        <li class="day" aria-label="Day 4"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+        <li class="day" aria-label="Day 5"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+      </ul>
+    </section>
+
+    <!-- Alerts & Tips -->
+    <section id="alerts" aria-labelledby="alerts-heading">
+      <h2 id="alerts-heading">Alerts & Tips</h2>
+      <div role="status" aria-live="polite" id="alerts-live">No active alerts.</div>
+      <ul id="tips">
+        <li>Press <kbd>Tab</kbd> to move, <kbd>Enter</kbd> to activate controls.</li>
+        <li>Use high-contrast mode in Settings if needed.</li>
+        <li>Enable voice commands to ask “What’s the weather now?”</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <div class="wrap">
+      <small>&copy; <span id="year"></span> WeatherEase. Weather data powered by OpenWeatherMap.</small>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="voice-control.js"></script>
+  <script src="script.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Voice Options for Weather Page
+    function readWeatherCommandOptions() {
+      speak(`To get current temperature, say 1. To get feels like, say 2.
+      To get condition, say 3. To get humidity, say 4. To get wind, say 5.
+      To get 5 day forecast for your location, say 6. To return to home screen, say 7.`);
+    }
+
+    function handleWeatherVoiceCommand(cmd) {
+      const command = cmd.toLowerCase();
+      switch(command) {
+        case '1': speakCurrent('temp'); break;
+        case '2': speakCurrent('feels'); break;
+        case '3': speakCurrent('desc'); break;
+        case '4': speakCurrent('humidity'); break;
+        case '5': speakCurrent('wind'); break;
+        case '6': speakForecast(); break;
+        case '7': speak("Returning to home"); window.location.href="index.html"; break;
+        default: speak("Command not recognized, please try again.");
+      }
+    }
+
+    function speakCurrent(field) {
+      const value = document.querySelector(`[data-field="${field}"]`)?.textContent ?? "not available";
+      speak(`${field.replace(/-/g,' ')}: ${value}`);
+    }
+
+    function speakForecast() {
+      const list = document.querySelectorAll('#forecast-list li');
+      list.forEach(li => {
+        const day = li.querySelector('[data-day]').textContent;
+        const hi = li.querySelector('[data-high]').textContent;
+        const lo = li.querySelector('[data-low]').textContent;
+        const desc = li.querySelector('[data-desc]').textContent;
+        speak(`${day}: High ${hi}, Low ${lo}, Condition ${desc}`);
+      });
+    }
+
+    // Override voice-control.js onresult for Weather Page
+    if (typeof recognition !== 'undefined') {
+      recognition.onresult = (event) => {
+        const command = event.results[0][0].transcript.trim();
+        console.log("Heard:", command);
+        handleWeatherVoiceCommand(command);
+      };
+    }
+
+    // Auto greeting for Weather Page
+    window.addEventListener('DOMContentLoaded', () => {
+      speak("To access weather, share your location or ask for a city.");
+    });
+  </script>
 </body>
 </html>
+
+
 
 

@@ -1,29 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WeatherEase — Home</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherEase — Home</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <header>
-    <h1>WeatherEase</h1>
-    <p>Accessible, simple weather for everyone</p>
+  <header role="banner">
+    <div class="wrap">
+      <h1>WeatherEase</h1>
+      <p>Accessible, simple weather for everyone</p>
+    </div>
   </header>
 
-  <main>
-    <h2>Home</h2>
-    <div class="dashboard-buttons">
-      <button id="btn-weather">Get Weather</button>
-      <button id="btn-settings">Settings</button>
-      <button id="btn-exit">Exit</button>
-    </div>
-
-    <div id="voice-status">Voice status: off</div>
+  <main id="content" role="main">
+    <section aria-label="Home options">
+      <div class="dashboard-buttons">
+        <button class="home-button" id="weather-btn" aria-label="Get Weather">
+          🌤 Get Weather
+        </button>
+        <button class="home-button" id="settings-btn" aria-label="Settings">
+          ⚙️ Settings
+        </button>
+        <button class="home-button" id="exit-btn" aria-label="Exit">
+          ❌ Exit
+        </button>
+      </div>
+      <p id="voice-status" style="margin-top:1rem; opacity:.8;">Voice status will appear here…</p>
+    </section>
   </main>
 
-<script src="voice-control.js"></script>
+  <footer role="contentinfo">
+    <div class="wrap">
+      <small>&copy; <span id="year"></span> WeatherEase.</small>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="voice-control.js"></script>
+  <script>
+    // Update year automatically
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Connect buttons to pages
+    document.getElementById('weather-btn').addEventListener('click', () => {
+      window.location.href = 'weather.html';
+    });
+    document.getElementById('settings-btn').addEventListener('click', () => {
+      window.location.href = 'settings.html';
+    });
+    document.getElementById('exit-btn').addEventListener('click', () => {
+      window.location.href = 'exit.html';
+    });
+
+    // Optional: initial greeting
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof speak === "function") {
+        speak("Welcome to WeatherEase! To enable voice features, say allow. Then you can say: Get Weather, Settings, or Exit. To access Get Weather say 1, to access Settings say 2, to access Exit say 9.");
+      }
+    });
+  </script>
 </body>
 </html>
+
+
+
 

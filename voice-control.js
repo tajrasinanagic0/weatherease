@@ -1,16 +1,25 @@
+// ----------------------------
+// Voice & Speech System Setup
+// ----------------------------
 const voiceStatus = document.getElementById('voice-status');
+const synth = window.speechSynthesis;
 let recognition;
 
+// ----------------------------
+// Speak function
+// ----------------------------
 function speak(text) {
-  const synth = window.speechSynthesis;
-  if(synth.speaking) synth.cancel();
+  if (synth.speaking) synth.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   synth.speak(utter);
 }
 
+// ----------------------------
+// Start voice recognition
+// ----------------------------
 function startVoiceRecognition() {
   if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    if(voiceStatus) voiceStatus.textContent = "Speech recognition not supported.";
+    if (voiceStatus) voiceStatus.textContent = "Speech recognition not supported in this browser.";
     return;
   }
 
@@ -20,99 +29,138 @@ function startVoiceRecognition() {
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
-  if(voiceStatus) voiceStatus.textContent = "Listening for commands…";
+  if (voiceStatus) voiceStatus.textContent = "Listening for commands...";
   recognition.start();
 
   recognition.onresult = (event) => {
     const command = event.results[0][0].transcript.trim().toLowerCase();
+    console.log("Heard:", command);
     handleVoiceCommand(command);
   };
 
   recognition.onerror = (event) => {
     console.error(event.error);
-    if(voiceStatus) voiceStatus.textContent = `Error: ${event.error}`;
+    if (voiceStatus) voiceStatus.textContent = `Error: ${event.error}`;
   };
 
   recognition.onend = () => {
-    recognition.start(); // keep listening
+    recognition.start(); // continuous listening
   };
 }
 
+// ----------------------------
+// Handle voice commands
+// ----------------------------
 function handleVoiceCommand(cmd) {
-  // Home page commands
-  if(document.location.pathname.endsWith("index.html")){
-    switch(cmd){
-      case "1":
-      case "get weather":
+  const currentPage = window.location.pathname.split("/").pop();
+
+  // --- Home page commands ---
+  if (currentPage === 'index.html' || currentPage === '') {
+    switch(cmd) {
+      case '1':
+      case 'get weather':
         speak("Navigating to Weather page");
         window.location.href = "weather.html";
         break;
-      case "2":
-      case "settings":
+      case '2':
+      case 'settings':
         speak("Navigating to Settings");
         window.location.href = "settings.html";
         break;
-      case "9":
-      case "exit":
-        speak("Exiting app");
+      case '9':
+      case 'exit':
+        speak("Exiting WeatherEase. Goodbye!");
         window.location.href = "exit.html";
         break;
+      case 'allow':
+        speak("Voice features enabled.");
+        break;
       default:
-        speak("Command not recognized. Say 1 for Weather, 2 for Settings, 9 for Exit.");
+        speak("Command not recognized. Say 1 for Weather, 2 for Settings, 9 to Exit.");
         break;
     }
   }
 
-  // Weather page commands
-  if(document.location.pathname.endsWith("weather.html")){
-    switch(cmd){
-      case "1": document.getElementById('get-temp-btn')?.click(); speak("Getting temperature"); break;
-      case "2": speak("Currently feels like: " + document.querySelector('[data-field="feels"]')?.textContent); break;
-      case "3": speak("Condition: " + document.querySelector('[data-field="desc"]')?.textContent); break;
-      case "4": speak("Humidity: " + document.querySelector('[data-field="humidity"]')?.textContent); break;
-      case "5": speak("Wind: " + document.querySelector('[data-field="wind"]')?.textContent); break;
-      case "6": // read 5-day forecast
-        document.querySelectorAll('#forecast-list li').forEach(li => {
-          const day = li.querySelector('[data-day]').textContent;
-          const high = li.querySelector('[data-high]').textContent;
-          const low = li.querySelector('[data-low]').textContent;
-          const desc = li.querySelector('[data-desc]').textContent;
-          speak(`${day}: High ${high}, Low ${low}, ${desc}`);
-        });
+  // --- Weather page commands ---
+  if (currentPage === 'weather.html') {
+    const tempBtn = document.getElementById('get-temp-btn');
+    const geoBtn  = document.getElementById('geo-btn');
+    switch(cmd) {
+      case '1':
+      case 'temperature':
+      case 'get temperature':
+        speak("Getting current temperature");
+        tempBtn?.click();
         break;
-      case "7":
-        speak("Returning to home");
+      case '2':
+      case 'feels like':
+        speak("Getting 'feels like' temperature");
+        tempBtn?.click();
+        break;
+      case '3':
+      case 'condition':
+      case 'weather condition':
+        speak("Getting weather condition");
+        tempBtn?.click();
+        break;
+      case '4':
+      case 'humidity':
+        speak("Getting humidity");
+        tempBtn?.click();
+        break;
+      case '5':
+      case 'wind':
+        speak("Getting wind speed");
+        tempBtn?.click();
+        break;
+      case '6':
+      case 'forecast':
+      case '5 day forecast':
+      case 'five day forecast':
+        speak("Reading 5 day forecast");
+        readForecastAloud();
+        break;
+      case '7':
+      case 'home':
+        speak("Returning to home screen");
         window.location.href = "index.html";
         break;
       default:
-        speak("Command not recognized, say 1 to 7.");
+        speak("Command not recognized. Say a number from 1 to 7.");
         break;
     }
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  // Auto start if localStorage voice enabled
-  if(localStorage.getItem('voiceEnabled') === "true"){
-    startVoiceRecognition();
-    if(voiceStatus) voiceStatus.textContent = "Voice commands enabled";
+// ----------------------------
+// Read 5-day forecast aloud
+// ----------------------------
+function readForecastAloud() {
+  const list = document.querySelectorAll('#forecast-list li');
+  if (!list.length) {
+    speak("Forecast is not available.");
+    return;
   }
 
-  // Settings checkbox hookup
-  const voiceCheckbox = document.getElementById('voice');
-  if(voiceCheckbox){
-    voiceCheckbox.checked = localStorage.getItem('voiceEnabled') === "true";
-    voiceCheckbox.addEventListener('change', () => {
-      if(voiceCheckbox.checked){
-        localStorage.setItem('voiceEnabled', 'true');
-        startVoiceRecognition();
-        if(voiceStatus) voiceStatus.textContent = "Voice commands enabled";
-      } else {
-        localStorage.setItem('voiceEnabled', 'false');
-        if(recognition) recognition.stop();
-        if(voiceStatus) voiceStatus.textContent = "Voice commands disabled";
-      }
-    });
-  }
+  let msg = "5 day forecast: ";
+  list.forEach((li, i) => {
+    const day = li.querySelector('[data-day]')?.textContent ?? '';
+    const high = li.querySelector('[data-high]')?.textContent ?? '';
+    const low  = li.querySelector('[data-low]')?.textContent ?? '';
+    const desc = li.querySelector('[data-desc]')?.textContent ?? '';
+    msg += `Day ${i+1}, ${day}, high ${high}, low ${low}, condition ${desc}. `;
+  });
+
+  speak(msg);
+}
+
+// ----------------------------
+// Auto-start on page load
+// ----------------------------
+window.addEventListener('DOMContentLoaded', () => {
+  if (voiceStatus) voiceStatus.textContent = "Voice commands ready.";
+  startVoiceRecognition();
 });
+
+
 
