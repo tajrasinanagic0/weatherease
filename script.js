@@ -1,9 +1,8 @@
 // ----------------------------
-// Weather Page Voice & Weather System
+// WeatherEase — Voice + Weather
 // ----------------------------
-const API_KEY = "2c1fb322de5c86e87d6eb7e265fe9f32"; // put your OpenWeather API key here
+const API_KEY = "2c1fb322de5c86e87d6eb7e265fe9f32";
 const synth = window.speechSynthesis;
-
 let recognition;
 let voiceEnabled = false;
 
@@ -13,102 +12,107 @@ const geoBtn = document.getElementById('geo-btn');
 const forecastList = document.getElementById('forecast-list');
 const currentStatus = document.getElementById('current-status');
 
-// Navbar buttons
-document.getElementById('home-btn')?.addEventListener('click', () => navigateHome());
-document.getElementById('settings-btn')?.addEventListener('click', () => navigateSettings());
-document.getElementById('exit-btn')?.addEventListener('click', () => navigateExit());
+// Navbar
+document.getElementById('home-btn')?.addEventListener('click', ()=> navigateHome());
+document.getElementById('settings-btn')?.addEventListener('click', ()=> navigateSettings());
+document.getElementById('exit-btn')?.addEventListener('click', ()=> navigateExit());
 
 // ----------------------------
 // Speak function
 // ----------------------------
-function speak(text) {
+function speak(text){
   if (!voiceEnabled) return;
   if (synth.speaking) synth.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  synth.speak(utter);
+  synth.speak(new SpeechSynthesisUtterance(text));
 }
 
 // ----------------------------
-// Navbar navigation
+// Navbar functions
 // ----------------------------
-function navigateHome() { speak("Returning to home screen"); window.location.href = "index.html"; }
-function navigateSettings() { speak("Opening settings"); window.location.href = "settings.html"; }
-function navigateExit() { speak("Thank you for using WeatherEase. Closing app now."); setTimeout(()=>window.close(), 3000); }
+function navigateHome(){ speak("Returning to home screen"); setTimeout(()=>window.location.href="index.html", 1500); }
+function navigateSettings(){ speak("Opening settings"); setTimeout(()=>window.location.href="settings.html", 1500); }
+function navigateExit(){ speak("Thank you for using WeatherEase. Closing app now."); setTimeout(()=>window.close(), 3000); }
 
 // ----------------------------
-// Enable voice button
+// Enable Voice
 // ----------------------------
-voiceBtn?.addEventListener('click', () => {
+voiceBtn?.addEventListener('click', ()=>{
   voiceEnabled = true;
-  speak("Voice features enabled. Listening for commands.");
+  speak("Voice features enabled. Press the 'Use my location' button now to fetch your weather.");
+  geoBtn.focus(); // assist blind users
   startRecognition();
-  greetUser();
   voiceBtn.style.display = "none";
 });
 
 // ----------------------------
-// Greeting
-// ----------------------------
-function greetUser() {
-  speak(`Welcome to WeatherEase Weather page! 
-To access weather, press or say 'Use my location'. 
-Once location is ready, choose an option: 
-1 for Current temperature, 
-2 for Feels like, 
-3 for Condition, 
-4 for Humidity, 
-5 for Wind, 
-6 for 5-day forecast, 
-7 to return to home screen.`);
-}
-
-// ----------------------------
 // Start voice recognition
 // ----------------------------
-function startRecognition() {
-  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    currentStatus.textContent = "Speech recognition not supported in this browser.";
+function startRecognition(){
+  if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+    speak("Speech recognition not supported.");
     return;
   }
+
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
   recognition.lang = 'en-US';
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
+
   recognition.start();
 
-  recognition.onresult = (event) => {
+  recognition.onresult = (event)=>{
     const command = event.results[0][0].transcript.trim().toLowerCase();
-    console.log("Heard:", command);
+    console.log("Voice command:", command);
     handleCommand(command);
   };
 
-  recognition.onerror = (event) => {
-    console.error(event.error);
-    currentStatus.textContent = `Error: ${event.error}`;
-  };
+  recognition.onerror = (e)=> console.log(e);
 
-  recognition.onend = () => {
-    if (voiceEnabled) recognition.start(); // continuous listening
-  };
+  recognition.onend = ()=> { if(voiceEnabled) recognition.start(); }
 }
 
 // ----------------------------
-// Handle voice commands
+// Voice command handler
 // ----------------------------
-function handleCommand(cmd) {
-  switch(cmd) {
-    case '1': case 'temperature': case 'current temperature': speakCurrent('temp'); break;
-    case '2': case 'feels like': speakCurrent('feels'); break;
-    case '3': case 'condition': speakCurrent('desc'); break;
-    case '4': case 'humidity': speakCurrent('humidity'); break;
-    case '5': case 'wind': speakCurrent('wind'); break;
-    case '6': case '5-day forecast': speakForecast(); break;
-    case '7': case 'home': case 'return home': navigateHome(); break;
-    case 'use my location':
-      geoBtn.click(); // trigger location button
+function handleCommand(cmd){
+  switch(cmd){
+    case '1':
+    case 'temperature':
+    case 'current temperature':
+      speakCurrent('temp');
       break;
-    default: speak("Command not recognized, please try again."); break;
+    case '2':
+    case 'feels like':
+      speakCurrent('feels');
+      break;
+    case '3':
+    case 'condition':
+      speakCurrent('desc');
+      break;
+    case '4':
+    case 'humidity':
+      speakCurrent('humidity');
+      break;
+    case '5':
+    case 'wind':
+      speakCurrent('wind');
+      break;
+    case '6':
+    case '5-day forecast':
+      speakForecast();
+      break;
+    case '7':
+    case 'home':
+    case 'return home':
+      navigateHome();
+      break;
+    default:
+      if(cmd.includes('home')) navigateHome();
+      else if(cmd.includes('settings')) navigateSettings();
+      else if(cmd.includes('exit')) navigateExit();
+      else speak("Command not recognized, please try again.");
+      break;
   }
 }
 
@@ -117,8 +121,8 @@ function handleCommand(cmd) {
 // ----------------------------
 function speakCurrent(field){
   const el = document.querySelector(`[data-field="${field}"]`);
-  if(el && el.textContent && el.textContent !== '—') speak(`${field.replace('-', ' ')} is ${el.textContent}`);
-  else speak(`${field.replace('-', ' ')} is not available yet`);
+  if(el && el.textContent && el.textContent!=='—') speak(`${field.replace('-',' ')} is ${el.textContent}`);
+  else speak(`${field} is not available yet`);
 }
 
 // ----------------------------
@@ -139,17 +143,20 @@ function speakForecast(){
 }
 
 // ----------------------------
-// Fetch weather via geolocation
+// Fetch weather using geolocation
 // ----------------------------
 geoBtn?.addEventListener('click', ()=>{
   if(!navigator.geolocation){ speak("Geolocation not supported"); return; }
+  speak("Fetching your location. Please allow location access.");
   navigator.geolocation.getCurrentPosition(pos=>{
-    fetchWeather(pos.coords.latitude, pos.coords.longitude);
+    fetchWeather(pos.coords.latitude,pos.coords.longitude);
+  }, err=>{
+    speak("Location access denied. Cannot fetch weather.");
   });
 });
 
 // ----------------------------
-// Fetch weather
+// Fetch weather & forecast
 // ----------------------------
 async function fetchWeather(lat, lon){
   try{
@@ -166,9 +173,6 @@ async function fetchWeather(lat, lon){
   } catch(e){ speak("Error fetching weather data"); console.log(e); }
 }
 
-// ----------------------------
-// Fetch forecast
-// ----------------------------
 async function fetchForecast(lat, lon){
   try{
     const resp = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
