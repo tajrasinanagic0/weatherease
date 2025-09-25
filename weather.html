@@ -7,69 +7,51 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header role="banner">
-  <div class="wrap">
-    <h1>WeatherEase</h1>
-    <nav aria-label="Primary">
-      <ul>
-        <li><button id="home-btn">Home</button></li>
-        <li><button id="settings-btn">Settings</button></li>
-        <li><button id="exit-btn">Exit</button></li>
-      </ul>
-    </nav>
-  </div>
+<header>
+  <h1>WeatherEase</h1>
+  <nav>
+    <button id="home-btn">Home</button>
+    <button id="settings-btn">Settings</button>
+    <button id="exit-btn">Exit</button>
+  </nav>
 </header>
 
-<main id="weather-content">
+<main>
   <button id="start-voice-btn">Enable Voice Features</button>
-  <p id="voice-status">Voice status will appear here…</p>
 
-  <section id="current-weather" aria-labelledby="current-heading">
-    <h2 id="current-heading">Current Weather</h2>
+  <form id="location-form">
+    <input type="search" id="search" placeholder="City or ZIP">
+    <button type="button" id="geo-btn">Use My Location</button>
+    <button type="submit">Submit</button>
+  </form>
 
-    <form id="location-form" aria-label="Choose location" style="display:flex; gap:.5rem; flex-wrap:wrap;">
-      <input id="search" name="search" type="search" placeholder="City or ZIP" />
-      <button type="button" id="geo-btn">Use my location</button>
-    </form>
-
-    <div id="current-card">
-      <p><strong>Location:</strong> <span data-field="place">—</span></p>
-      <p><strong>Temperature:</strong> <span data-field="temp">—</span></p>
-      <p><strong>Feels like:</strong> <span data-field="feels">—</span></p>
-      <p><strong>Condition:</strong> <span data-field="desc">—</span></p>
-      <p><strong>Humidity:</strong> <span data-field="humidity">—</span></p>
-      <p><strong>Wind:</strong> <span data-field="wind">—</span></p>
-    </div>
-
-    <div id="current-status" aria-live="polite" style="opacity:.8;">Ready.</div>
+  <section id="current-weather">
+    <p><strong>Location:</strong> <span data-field="place">—</span></p>
+    <p><strong>Temperature:</strong> <span data-field="temp">—</span></p>
+    <p><strong>Feels like:</strong> <span data-field="feels">—</span></p>
+    <p><strong>Condition:</strong> <span data-field="desc">—</span></p>
+    <p><strong>Humidity:</strong> <span data-field="humidity">—</span></p>
+    <p><strong>Wind:</strong> <span data-field="wind">—</span></p>
   </section>
 
-  <section id="forecast" aria-labelledby="forecast-heading">
-    <h2 id="forecast-heading">5-Day Forecast</h2>
-    <ul id="forecast-list" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:.75rem; list-style:none; padding:0;">
-      <li class="day"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
-      <li class="day"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
-      <li class="day"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
-      <li class="day"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
-      <li class="day"><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+  <section id="forecast">
+    <ul id="forecast-list">
+      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
+      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
+      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
+      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
+      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
     </ul>
   </section>
 
-  <section id="alerts" aria-labelledby="alerts-heading">
-    <h2 id="alerts-heading">Alerts & Tips</h2>
-    <div id="alerts-live" role="status" aria-live="polite">No active alerts.</div>
-  </section>
+  <div id="current-status">Ready.</div>
 </main>
 
 <script src="voice-control-weather.js"></script>
 <script src="script.js"></script>
-<script>
-  document.getElementById('home-btn').addEventListener('click', () => window.location.href='index.html');
-  document.getElementById('settings-btn').addEventListener('click', () => window.location.href='settings.html');
-  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');
-</script>
 </body>
 </html>
+
 
 
 

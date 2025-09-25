@@ -1,77 +1,64 @@
-// ----------------------------
-// Voice & Speech System for Weather Page
-// ----------------------------
 const synth = window.speechSynthesis;
 let recognition;
-const voiceStatus = document.getElementById('voice-status');
-const currentStatus = document.getElementById('current-status');
+let locationConfirmed = false;
 
-// ----------------------------
-// Speak function
-// ----------------------------
-function speak(text) {
-  if (synth.speaking) synth.cancel();
+// Speak helper
+function speak(text){
+  if(synth.speaking) synth.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   synth.speak(utter);
 }
 
-// ----------------------------
-// Greeting & Voice Menu
-// ----------------------------
-function greetWeatherUser() {
-  const greeting = `Welcome to WeatherEase Weather page!
-To access weather, share your location or say a city.
-Then choose an option:
+// Start recognition
+function startWeatherRecognition(){
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.start();
+
+  recognition.onresult = (event) => {
+    const cmd = event.results[0][0].transcript.trim().toLowerCase();
+    handleWeatherCommand(cmd);
+  };
+
+  recognition.onerror = (e)=> console.log(e);
+  recognition.onend = ()=> recognition.start();
+}
+
+// Weather option menu (1–7)
+function promptWeatherOptions(){
+  speak(`Choose an option:
 1: Current temperature
 2: Feels like
 3: Condition
 4: Humidity
 5: Wind
 6: 5-day forecast
-7: Return to home screen`;
-  speak(greeting);
-  if (voiceStatus) voiceStatus.textContent = "Listening for weather commands...";
+7: Return home`);
 }
 
-// ----------------------------
-// Start voice recognition
-// ----------------------------
-function startWeatherRecognition() {
-  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    voiceStatus.textContent = "Speech recognition not supported in this browser.";
+// Handle commands
+function handleWeatherCommand(cmd){
+  if(!locationConfirmed){
+    // Expecting city name
+    if(cmd.includes('location') || cmd.includes('city')){
+      // Trigger geolocation or city input logic
+      if(cmd.includes('location')){
+        document.getElementById('geo-btn').click();
+      } else {
+        const cityInput = document.getElementById('search').value;
+        if(cityInput) fetchCityWeather(cityInput);
+      }
+      return;
+    }
+    speak("Please share your location or enter a city name first.");
     return;
   }
 
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SpeechRecognition();
-  recognition.lang = 'en-US';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
-  recognition.start();
-
-  recognition.onresult = (event) => {
-    const command = event.results[0][0].transcript.trim().toLowerCase();
-    console.log("Heard:", command);
-    handleWeatherCommand(command);
-  };
-
-  recognition.onerror = (event) => {
-    console.error(event.error);
-    if (voiceStatus) voiceStatus.textContent = `Error: ${event.error}`;
-  };
-
-  recognition.onend = () => {
-    // Keep listening continuously
-    recognition.start();
-  };
-}
-
-// ----------------------------
-// Handle commands
-// ----------------------------
-function handleWeatherCommand(cmd) {
-  switch(cmd) {
+  switch(cmd){
     case '1':
     case 'temperature':
     case 'current temperature':
@@ -100,8 +87,8 @@ function handleWeatherCommand(cmd) {
     case '7':
     case 'home':
     case 'return home':
-      speak("Returning to home screen");
-      window.location.href = "index.html";
+      speak("Returning home");
+      window.location.href="index.html";
       break;
     default:
       speak("Command not recognized, please try again.");
@@ -109,41 +96,54 @@ function handleWeatherCommand(cmd) {
   }
 }
 
-// ----------------------------
-// Speak current weather fields
-// ----------------------------
-function speakCurrent(field) {
+// Fetch weather for city
+function fetchCityWeather(city){
+  // Use your existing API logic here
+  speak(`Fetching weather for ${city}`);
+  locationConfirmed = true;
+  promptWeatherOptions();
+}
+
+// Speak individual fields
+function speakCurrent(field){
   const el = document.querySelector(`[data-field="${field}"]`);
-  if (el && el.textContent && el.textContent !== '—') {
+  if(el && el.textContent !== '—'){
     speak(`${field.replace('-', ' ')} is ${el.textContent}`);
-  } else {
-    speak(`Sorry, ${field} is not available`);
-  }
+  } else speak(`Sorry, ${field} not available`);
 }
 
-// ----------------------------
 // Speak 5-day forecast
-// ----------------------------
-function speakForecast() {
+function speakForecast(){
   const liNodes = document.querySelectorAll('#forecast-list li');
-  if (!liNodes.length) { speak("No forecast data available."); return; }
+  if(!liNodes.length){ speak("No forecast available"); return; }
 
-  let forecastText = "Here is your 5-day forecast: ";
-  liNodes.forEach(li => {
-    const day = li.querySelector('[data-day]')?.textContent || '—';
-    const high = li.querySelector('[data-high]')?.textContent || '—';
-    const low = li.querySelector('[data-low]')?.textContent || '—';
-    const desc = li.querySelector('[data-desc]')?.textContent || '—';
-    forecastText += `${day}: High ${high}, Low ${low}, ${desc}. `;
+  let text = "Here is your 5-day forecast: ";
+  liNodes.forEach(li=>{
+    text += `${li.querySelector('[data-day]').textContent}: High ${li.querySelector('[data-high]').textContent}, Low ${li.querySelector('[data-low]').textContent}, ${li.querySelector('[data-desc]').textContent}. `;
   });
-
-  speak(forecastText);
+  speak(text);
 }
 
-// ----------------------------
-// Initialize on page load
-// ----------------------------
-window.addEventListener('DOMContentLoaded', () => {
-  greetWeatherUser();
-  startWeatherRecognition();
+// Setup buttons
+document.getElementById('geo-btn')?.addEventListener('click', ()=>{
+  if(!navigator.geolocation) return alert("Geolocation not supported.");
+  navigator.geolocation.getCurrentPosition(pos=>{
+    fetchWeather(pos.coords.latitude, pos.coords.longitude);
+    fetchForecast(pos.coords.latitude, pos.coords.longitude);
+    locationConfirmed = true;
+    promptWeatherOptions();
+  });
 });
+
+document.getElementById('location-form')?.addEventListener('submit', e=>{
+  e.preventDefault();
+  const city = document.getElementById('search').value;
+  if(city) fetchCityWeather(city);
+});
+
+// Start recognition on page load
+window.addEventListener('DOMContentLoaded', ()=>{
+  startWeatherRecognition();
+  speak("Welcome to WeatherEase Weather page. Please share your location or enter a city.");
+});
+

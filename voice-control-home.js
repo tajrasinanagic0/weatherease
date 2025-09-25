@@ -1,99 +1,63 @@
-// ----------------------------
-// Voice & Speech System for Home Page
-// ----------------------------
+const startVoiceBtn = document.querySelectorAll('#start-voice-btn');
+const voiceStatus = document.querySelectorAll('#voice-status');
 const synth = window.speechSynthesis;
 let recognition;
-const voiceStatus = document.getElementById('voice-status');
 
-// ----------------------------
-// Speak function
-// ----------------------------
-function speak(text) {
-  if (synth.speaking) synth.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  synth.speak(utter);
+function speak(text){
+  if(synth.speaking) synth.cancel();
+  synth.speak(new SpeechSynthesisUtterance(text));
 }
 
-// ----------------------------
-// Greeting & Voice Menu
-// ----------------------------
-function greetHomeUser() {
-  const greeting = `Welcome to WeatherEase!
-To enable voice features, please allow microphone access.
-Once enabled, here are your options:
-1: Get Weather
-2: Settings
-9: Exit
-To select, say the number or the option name.`;
-  speak(greeting);
-  if (voiceStatus) voiceStatus.textContent = "Listening for home commands...";
-}
-
-// ----------------------------
-// Start voice recognition
-// ----------------------------
-function startHomeRecognition() {
-  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    voiceStatus.textContent = "Speech recognition not supported in this browser.";
-    return;
-  }
-
+function startRecognition(){
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) return;
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
   recognition.lang = 'en-US';
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
-
   recognition.start();
 
-  recognition.onresult = (event) => {
-    const command = event.results[0][0].transcript.trim().toLowerCase();
-    console.log("Heard:", command);
-    handleHomeCommand(command);
+  recognition.onresult = e=>{
+    const cmd = e.results[0][0].transcript.trim().toLowerCase();
+    handleCommand(cmd);
   };
-
-  recognition.onerror = (event) => {
-    console.error(event.error);
-    if (voiceStatus) voiceStatus.textContent = `Error: ${event.error}`;
-  };
-
-  recognition.onend = () => {
-    // Keep listening continuously
-    recognition.start();
-  };
+  recognition.onend = ()=> recognition.start();
 }
 
-// ----------------------------
-// Handle home commands
-// ----------------------------
-function handleHomeCommand(cmd) {
-  switch(cmd) {
+function handleCommand(cmd){
+  switch(cmd){
     case '1':
     case 'get weather':
-    case 'weather':
-      speak("Navigating to Weather page");
-      window.location.href = "weather.html";
+      speak("Navigating to Weather");
+      window.location.href="weather.html";
       break;
     case '2':
     case 'settings':
-      speak("Navigating to Settings page");
-      window.location.href = "settings.html";
+      speak("Navigating to Settings");
+      window.location.href="settings.html";
       break;
     case '9':
     case 'exit':
-      speak("Exiting app. Thank you for using WeatherEase, your easy breezy forecast!");
-      window.location.href = "exit.html";
+      speak("Exiting app");
+      window.location.href="exit.html";
       break;
     default:
-      speak("Command not recognized, please say 1, 2, or 9.");
-      break;
+      speak("Command not recognized, please try again.");
   }
 }
 
-// ----------------------------
-// Initialize on page load
-// ----------------------------
-window.addEventListener('DOMContentLoaded', () => {
-  greetHomeUser();
-  startHomeRecognition();
+// Attach to all start voice buttons
+startVoiceBtn.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    speak("Voice commands enabled. Say 1 for Get Weather, 2 for Settings, 9 for Exit.");
+    startRecognition();
+  });
 });
+
+// Home buttons
+document.getElementById('get-weather-btn')?.addEventListener('click', ()=>window.location.href="weather.html");
+document.getElementById('settings-btn')?.addEventListener('click', ()=>window.location.href="settings.html");
+document.getElementById('exit-btn')?.addEventListener('click', ()=>window.location.href="exit.html");
+document.getElementById('home-btn')?.addEventListener('click', ()=>window.location.href="index.html");
+document.getElementById('weather-btn')?.addEventListener('click', ()=>window.location.href="weather.html");
+
