@@ -108,32 +108,33 @@ function startRecognition() {
 // ----------------------------
 function handleCommand(cmd) {
   switch(cmd) {
-    case '1':
+    case 'one':
     case 'temperature':
     case 'current temperature':
-      speakCurrent('temp');
+      speakCurrent('temperature');
       break;
-    case '2':
+    case 'two':
     case 'feels like':
-      speakCurrent('feels');
+      speakCurrent('feels like');
       break;
-    case '3':
+    case 'three':
     case 'condition':
       speakCurrent('condition');
       break;
-    case '4':
+    case 'four':
     case 'humidity':
       speakCurrent('humidity');
       break;
-    case '5':
+    case 'five':
     case 'wind':
       speakCurrent('wind');
       break;
-    case '6':
-    case ' five day forecast':
+    case 'six':
+    case 'five day forecast':
+    case 'forecast':
       speakForecast();
       break;
-    case '7':
+    case 'seven':
     case 'home':
     case 'return home':
       navigateHome();
