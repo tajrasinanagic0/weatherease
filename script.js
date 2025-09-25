@@ -1,7 +1,7 @@
 // ----------------------------
 // Weather Page Voice & Weather System
 // ----------------------------
-const API_KEY = "2c1fb322de5c86e87d6eb7e265fe9f3"; // replace with your OpenWeather API key
+const API_KEY = "2c1fb322de5c86e87d6eb7e265fe9f32"; // replace with your OpenWeather API key
 const synth = window.speechSynthesis;
 
 let recognition;
