@@ -9,12 +9,14 @@
 <body>
 <h1>Thank you for using WeatherEase!</h1>
 <p>Closing app now…</p>
-
 <script>
 const synth = window.speechSynthesis;
 const utter = new SpeechSynthesisUtterance("Thank you for using WeatherEase, your easy breezy forecast! Closing app now.");
 synth.speak(utter);
-setTimeout(()=>{ window.close(); }, 10000);
+setTimeout(()=>{ window.location.href="index.html"; }, 3000);
 </script>
 </body>
 </html>
+
+
+

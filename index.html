@@ -5,15 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WeatherEase — Home</title>
 <link rel="stylesheet" href="style.css">
-<link rel="manifest" href="manifest.json">
 </head>
 <body>
 <main class="home-screen">
   <h1>WeatherEase</h1>
   <p>Accessible, simple weather for everyone</p>
 
-  <!-- Voice start button for iOS fallback -->
-  <button id="start-voice-btn">Enable Voice Features</button>
+  <!-- Enable voice button -->
+  <button id="start-voice-btn">Start Voice Features</button>
 
   <div class="dashboard-buttons">
     <button id="get-weather-btn">Get Weather</button>
@@ -21,17 +20,13 @@
     <button id="exit-btn">Exit</button>
   </div>
 
-  <p id="voice-status" style="margin-top:1rem; font-style:italic;">Voice status will appear here…</p>
+  <div id="voice-status" style="margin-top:1rem; font-style:italic;">Voice status will appear here…</div>
 </main>
 
 <script src="voice-control.js"></script>
 </body>
 </html>
-<script>
-  document.getElementById('get-weather-btn').addEventListener('click', () => window.location.href='weather.html');
-  document.getElementById('settings-btn').addEventListener('click', () => window.location.href='settings.html');
-  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');
-</script>
+
 
 
 
