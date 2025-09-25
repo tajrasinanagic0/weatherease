@@ -1,32 +1,22 @@
 // ----------------------------
 // Weather Page Voice & Weather System
 // ----------------------------
-const API_KEY = "2c1fb322de5c86e87d6eb7e265fe9f32";
+const API_KEY = "2c1fb322de5c86e87d6eb7e265fe9f32"; // put your OpenWeather API key here
 const synth = window.speechSynthesis;
 
-let recognition; // Speech recognition instance
-let voiceEnabled = false; // Voice toggle for iOS / PWA
+let recognition;
+let voiceEnabled = false;
 
 // DOM Elements
-const voiceBtn = document.createElement('button');
-voiceBtn.textContent = "Enable Voice Features";
-voiceBtn.style.margin = "1rem 0";
-voiceBtn.id = "start-voice-btn";
-document.body.prepend(voiceBtn);
+const voiceBtn = document.getElementById('enable-voice-btn');
+const geoBtn = document.getElementById('geo-btn');
+const forecastList = document.getElementById('forecast-list');
+const currentStatus = document.getElementById('current-status');
 
-const voiceStatus = document.getElementById('voice-status') || document.createElement('p');
-
-// Navbar Buttons
+// Navbar buttons
 document.getElementById('home-btn')?.addEventListener('click', () => navigateHome());
 document.getElementById('settings-btn')?.addEventListener('click', () => navigateSettings());
 document.getElementById('exit-btn')?.addEventListener('click', () => navigateExit());
-
-// Location & Forecast
-const geoBtn = document.getElementById('geo-btn');
-const locationForm = document.getElementById('location-form');
-const searchInput = document.getElementById('search');
-const forecastList = document.getElementById('forecast-list');
-const currentStatus = document.getElementById('current-status');
 
 // ----------------------------
 // Speak function
@@ -39,16 +29,16 @@ function speak(text) {
 }
 
 // ----------------------------
-// Navbar Navigation
+// Navbar navigation
 // ----------------------------
 function navigateHome() { speak("Returning to home screen"); window.location.href = "index.html"; }
 function navigateSettings() { speak("Opening settings"); window.location.href = "settings.html"; }
 function navigateExit() { speak("Thank you for using WeatherEase. Closing app now."); setTimeout(()=>window.close(), 3000); }
 
 // ----------------------------
-// Greeting & Voice Setup
+// Enable voice button
 // ----------------------------
-voiceBtn.addEventListener('click', () => {
+voiceBtn?.addEventListener('click', () => {
   voiceEnabled = true;
   speak("Voice features enabled. Listening for commands.");
   startRecognition();
@@ -56,20 +46,20 @@ voiceBtn.addEventListener('click', () => {
   voiceBtn.style.display = "none";
 });
 
-// Automatic greeting
+// ----------------------------
+// Greeting
+// ----------------------------
 function greetUser() {
-  const greeting = `Welcome to WeatherEase Weather page!
-To access weather, share your location or say a city.
-Then choose an option:
-1: Current temperature
-2: Feels like
-3: Condition
-4: Humidity
-5: Wind
-6: 5-day forecast
-7: Return to home screen.`;
-  speak(greeting);
-  if(voiceStatus) voiceStatus.textContent = "Listening for commands...";
+  speak(`Welcome to WeatherEase Weather page! 
+To access weather, press or say 'Use my location'. 
+Once location is ready, choose an option: 
+1 for Current temperature, 
+2 for Feels like, 
+3 for Condition, 
+4 for Humidity, 
+5 for Wind, 
+6 for 5-day forecast, 
+7 to return to home screen.`);
 }
 
 // ----------------------------
@@ -77,7 +67,7 @@ Then choose an option:
 // ----------------------------
 function startRecognition() {
   if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    voiceStatus.textContent = "Speech recognition not supported in this browser.";
+    currentStatus.textContent = "Speech recognition not supported in this browser.";
     return;
   }
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -95,7 +85,7 @@ function startRecognition() {
 
   recognition.onerror = (event) => {
     console.error(event.error);
-    if(voiceStatus) voiceStatus.textContent = `Error: ${event.error}`;
+    currentStatus.textContent = `Error: ${event.error}`;
   };
 
   recognition.onend = () => {
@@ -108,53 +98,27 @@ function startRecognition() {
 // ----------------------------
 function handleCommand(cmd) {
   switch(cmd) {
-    case '1':
-    case 'temperature':
-    case 'current temperature':
-      speakCurrent('temp');
+    case '1': case 'temperature': case 'current temperature': speakCurrent('temp'); break;
+    case '2': case 'feels like': speakCurrent('feels'); break;
+    case '3': case 'condition': speakCurrent('desc'); break;
+    case '4': case 'humidity': speakCurrent('humidity'); break;
+    case '5': case 'wind': speakCurrent('wind'); break;
+    case '6': case '5-day forecast': speakForecast(); break;
+    case '7': case 'home': case 'return home': navigateHome(); break;
+    case 'use my location':
+      geoBtn.click(); // trigger location button
       break;
-    case '2':
-    case 'feels like':
-      speakCurrent('feels');
-      break;
-    case '3':
-    case 'condition':
-      speakCurrent('desc');
-      break;
-    case '4':
-    case 'humidity':
-      speakCurrent('humidity');
-      break;
-    case '5':
-    case 'wind':
-      speakCurrent('wind');
-      break;
-    case '6':
-    case '5-day forecast':
-      speakForecast();
-      break;
-    case '7':
-    case 'home':
-    case 'return home':
-      navigateHome();
-      break;
-    default:
-      if (cmd.includes('home')) navigateHome();
-      else if (cmd.includes('settings')) navigateSettings();
-      else if (cmd.includes('exit')) navigateExit();
-      else if (cmd.length > 0) fetchWeatherByCity(cmd); // assume city
-      else speak("Command not recognized, please try again.");
-      break;
+    default: speak("Command not recognized, please try again."); break;
   }
 }
 
 // ----------------------------
-// Speak current weather fields
+// Speak current weather
 // ----------------------------
 function speakCurrent(field){
   const el = document.querySelector(`[data-field="${field}"]`);
-  if (el && el.textContent && el.textContent !== '—') speak(`${field.replace('-', ' ')} is ${el.textContent}`);
-  else speak(`${field} is not available yet`);
+  if(el && el.textContent && el.textContent !== '—') speak(`${field.replace('-', ' ')} is ${el.textContent}`);
+  else speak(`${field.replace('-', ' ')} is not available yet`);
 }
 
 // ----------------------------
@@ -175,7 +139,17 @@ function speakForecast(){
 }
 
 // ----------------------------
-// Fetch weather by coordinates
+// Fetch weather via geolocation
+// ----------------------------
+geoBtn?.addEventListener('click', ()=>{
+  if(!navigator.geolocation){ speak("Geolocation not supported"); return; }
+  navigator.geolocation.getCurrentPosition(pos=>{
+    fetchWeather(pos.coords.latitude, pos.coords.longitude);
+  });
+});
+
+// ----------------------------
+// Fetch weather
 // ----------------------------
 async function fetchWeather(lat, lon){
   try{
@@ -193,7 +167,7 @@ async function fetchWeather(lat, lon){
 }
 
 // ----------------------------
-// Fetch 5-day forecast
+// Fetch forecast
 // ----------------------------
 async function fetchForecast(lat, lon){
   try{
@@ -201,41 +175,11 @@ async function fetchForecast(lat, lon){
     const data = await resp.json();
     const days = [...forecastList.querySelectorAll('li')];
     for(let i=0;i<days.length;i++){
-      const dayData = data.list[i*8]; // approx 1 reading per day
+      const dayData = data.list[i*8];
       days[i].querySelector('[data-day]').textContent = new Date(dayData.dt*1000).toLocaleDateString('en-US',{weekday:'long'});
       days[i].querySelector('[data-high]').textContent = Math.round(dayData.main.temp_max)+'°C';
       days[i].querySelector('[data-low]').textContent = Math.round(dayData.main.temp_min)+'°C';
       days[i].querySelector('[data-desc]').textContent = dayData.weather[0].description;
     }
-  } catch(e){ console.log(e); }
+  } catch(e){ speak("Error fetching forecast"); console.log(e); }
 }
-
-// ----------------------------
-// Fetch weather by city name
-// ----------------------------
-async function fetchWeatherByCity(city){
-  try{
-    const geoResp = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`);
-    const geoData = await geoResp.json();
-    if(!geoData.length){ speak("City not found"); return; }
-    const {lat, lon} = geoData[0];
-    fetchWeather(lat, lon);
-  } catch(e){ speak("Error fetching city location"); console.log(e); }
-}
-
-// ----------------------------
-// Event listeners
-// ----------------------------
-geoBtn?.addEventListener('click', ()=>{
-  if(!navigator.geolocation){ speak("Geolocation not supported"); return; }
-  navigator.geolocation.getCurrentPosition(pos=>{
-    fetchWeather(pos.coords.latitude, pos.coords.longitude);
-  });
-});
-
-locationForm?.addEventListener('submit', e=>{
-  e.preventDefault();
-  const city = searchInput.value.trim();
-  if(city.length>0) fetchWeatherByCity(city);
-});
-
