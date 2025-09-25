@@ -1,9 +1,10 @@
 // ----------------------------
-// Voice & Speech System Setup
+// Voice & Speech System for Weather Page
 // ----------------------------
-const voiceStatus = document.getElementById('current-status');
 const synth = window.speechSynthesis;
 let recognition;
+const voiceStatus = document.getElementById('voice-status');
+const currentStatus = document.getElementById('current-status');
 
 // ----------------------------
 // Speak function
@@ -15,19 +16,29 @@ function speak(text) {
 }
 
 // ----------------------------
-// Greeting / Voice Options
+// Greeting & Voice Menu
 // ----------------------------
-function greetWeather() {
-  speak(`To access weather, share your location or say a city name.`);
-  voiceStatus.textContent = "Awaiting voice command...";
+function greetWeatherUser() {
+  const greeting = `Welcome to WeatherEase Weather page!
+To access weather, share your location or say a city.
+Then choose an option:
+1: Current temperature
+2: Feels like
+3: Condition
+4: Humidity
+5: Wind
+6: 5-day forecast
+7: Return to home screen`;
+  speak(greeting);
+  if (voiceStatus) voiceStatus.textContent = "Listening for weather commands...";
 }
 
 // ----------------------------
 // Start voice recognition
 // ----------------------------
-function startVoiceRecognition() {
+function startWeatherRecognition() {
   if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
-    voiceStatus.textContent = "Voice not supported. Use buttons.";
+    voiceStatus.textContent = "Speech recognition not supported in this browser.";
     return;
   }
 
@@ -40,100 +51,99 @@ function startVoiceRecognition() {
   recognition.start();
 
   recognition.onresult = (event) => {
-    const command = event.results[0][0].transcript.trim();
+    const command = event.results[0][0].transcript.trim().toLowerCase();
     console.log("Heard:", command);
-    handleVoiceCommand(command);
+    handleWeatherCommand(command);
   };
 
   recognition.onerror = (event) => {
     console.error(event.error);
-    voiceStatus.textContent = `Error: ${event.error}`;
+    if (voiceStatus) voiceStatus.textContent = `Error: ${event.error}`;
   };
 
-  recognition.onend = () => recognition.start(); // Continuous listening
+  recognition.onend = () => {
+    // Keep listening continuously
+    recognition.start();
+  };
 }
 
 // ----------------------------
-// Voice command mapping
+// Handle commands
 // ----------------------------
-function handleVoiceCommand(command) {
-  const cmd = command.toLowerCase();
-
+function handleWeatherCommand(cmd) {
   switch(cmd) {
+    case '1':
+    case 'temperature':
+    case 'current temperature':
+      speakCurrent('temp');
+      break;
+    case '2':
+    case 'feels like':
+      speakCurrent('feels');
+      break;
+    case '3':
+    case 'condition':
+      speakCurrent('desc');
+      break;
+    case '4':
+    case 'humidity':
+      speakCurrent('humidity');
+      break;
+    case '5':
+    case 'wind':
+      speakCurrent('wind');
+      break;
+    case '6':
+    case '5-day forecast':
+      speakForecast();
+      break;
+    case '7':
     case 'home':
-      speak("Returning home");
+    case 'return home':
+      speak("Returning to home screen");
       window.location.href = "index.html";
       break;
-    case 'settings':
-      speak("Opening settings");
-      window.location.href = "settings.html";
-      break;
-    case 'exit':
-      speak("Exiting app");
-      window.location.href = "exit.html";
-      break;
-    case 'use my location':
-      document.getElementById('geo-btn')?.click();
-      break;
-    case 'current temperature':
-    case '1':
-      speakCurrent('temp'); break;
-    case 'feels like':
-    case '2':
-      speakCurrent('feels'); break;
-    case 'condition':
-    case '3':
-      speakCurrent('desc'); break;
-    case 'humidity':
-    case '4':
-      speakCurrent('humidity'); break;
-    case 'wind':
-    case '5':
-      speakCurrent('wind'); break;
-    case '5 day forecast':
-    case '6':
-      speakForecast(); break;
-    case 'return home':
-    case '7':
-      window.location.href = "index.html"; break;
     default:
       speak("Command not recognized, please try again.");
+      break;
   }
 }
 
 // ----------------------------
-// Helper to read current data
+// Speak current weather fields
 // ----------------------------
 function speakCurrent(field) {
-  const value = document.querySelector(`[data-field="${field}"]`)?.textContent || 'Not available';
-  speak(`${field.replace(/_/g,' ')}: ${value}`);
+  const el = document.querySelector(`[data-field="${field}"]`);
+  if (el && el.textContent && el.textContent !== '—') {
+    speak(`${field.replace('-', ' ')} is ${el.textContent}`);
+  } else {
+    speak(`Sorry, ${field} is not available`);
+  }
 }
 
 // ----------------------------
-// Helper to read 5-day forecast
+// Speak 5-day forecast
 // ----------------------------
 function speakForecast() {
-  const items = document.querySelectorAll('#forecast-list li');
-  items.forEach(li => {
-    const day = li.querySelector('[data-day]').textContent;
-    const hi = li.querySelector('[data-high]').textContent;
-    const lo = li.querySelector('[data-low]').textContent;
-    const desc = li.querySelector('[data-desc]').textContent;
-    if(day && day !== '—') speak(`${day}: High ${hi}, Low ${lo}, ${desc}`);
+  const liNodes = document.querySelectorAll('#forecast-list li');
+  if (!liNodes.length) { speak("No forecast data available."); return; }
+
+  let forecastText = "Here is your 5-day forecast: ";
+  liNodes.forEach(li => {
+    const day = li.querySelector('[data-day]')?.textContent || '—';
+    const high = li.querySelector('[data-high]')?.textContent || '—';
+    const low = li.querySelector('[data-low]')?.textContent || '—';
+    const desc = li.querySelector('[data-desc]')?.textContent || '—';
+    forecastText += `${day}: High ${high}, Low ${low}, ${desc}. `;
   });
+
+  speak(forecastText);
 }
 
 // ----------------------------
-// Navbar buttons
-// ----------------------------
-document.getElementById('home-btn')?.addEventListener('click', () => window.location.href="index.html");
-document.getElementById('settings-btn')?.addEventListener('click', () => window.location.href="settings.html");
-document.getElementById('exit-btn')?.addEventListener('click', () => window.location.href="exit.html");
-
-// ----------------------------
-// Auto-start voice on page load
+// Initialize on page load
 // ----------------------------
 window.addEventListener('DOMContentLoaded', () => {
-  greetWeather();
-  startVoiceRecognition();
+  greetWeatherUser();
+  startWeatherRecognition();
 });
