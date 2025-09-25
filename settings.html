@@ -1,80 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WeatherEase — Settings</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WeatherEase — Settings</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header role="banner">
-    <div class="wrap">
-      <h1>WeatherEase Settings</h1>
-      <nav aria-label="Primary">
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="weather.html">Weather</a></li>
-          <li><a href="exit.html">Exit</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+<header>
+  <nav>
+    <button id="home-btn">Home</button>
+    <button id="weather-btn">Weather</button>
+    <button id="exit-btn">Exit</button>
+  </nav>
+</header>
 
-  <main id="content" role="main">
-    <section aria-label="Settings and Accessibility Options">
-      <form aria-label="Accessibility settings" style="display:grid; gap:.75rem; max-width:600px;">
-        <label><input type="checkbox" id="dark-mode"> Dark mode</label>
-        <label><input type="checkbox" id="big-text"> Use larger text</label>
-        <label><input type="checkbox" id="high-contrast"> High contrast</label>
-        <label><input type="checkbox" id="voice"> Enable voice commands</label>
+<main>
+  <button id="start-voice-btn">Enable Voice Features</button>
+  <p id="voice-status">Voice status will appear here…</p>
 
-        <label>
-          Units:
-          <select id="unit-select">
-            <option value="metric">Celsius</option>
-            <option value="imperial">Fahrenheit</option>
-          </select>
-        </label>
+  <section aria-label="Settings and Accessibility Options">
+    <form>
+      <label><input type="checkbox" id="dark-mode"> Dark mode</label>
+      <label><input type="checkbox" id="big-text"> Use larger text</label>
+      <label><input type="checkbox" id="high-contrast"> High contrast</label>
+      <label><input type="checkbox" id="voice"> Enable voice commands</label>
+      <label>
+        Units:
+        <select id="unit-select">
+          <option value="metric">Celsius</option>
+          <option value="imperial">Fahrenheit</option>
+        </select>
+      </label>
+    </form>
+  </section>
+</main>
 
-        <p id="voice-status" style="margin-top:1rem; opacity:.8;">Voice status will appear here…</p>
-      </form>
-    </section>
-  </main>
-
-  <footer role="contentinfo">
-    <div class="wrap">
-      <small>&copy; <span id="year"></span> WeatherEase.</small>
-    </div>
-  </footer>
-
-  <!-- Scripts -->
-  <script src="voice-control.js"></script>
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Restore persisted dark mode
-    if (localStorage.getItem('darkMode') === 'true') {
-      document.body.classList.add('dark-mode');
-      document.getElementById('dark-mode').checked = true;
-    }
-
-    const darkMode = document.getElementById('dark-mode');
-    const bigText = document.getElementById('big-text');
-    const contrast = document.getElementById('high-contrast');
-    const voiceToggle = document.getElementById('voice');
-    const voiceStatus = document.getElementById('voice-status');
-    const unitSelect = document.getElementById('unit-select');
-
-    darkMode?.addEventListener('change', () => {
-      document.body.classList.toggle('dark-mode', darkMode.checked);
-      localStorage.setItem('darkMode', darkMode.checked);
-      if (voiceToggle.checked) speak(darkMode.checked ? "Dark mode enabled" : "Dark mode disabled");
-    });
-
-    bigText?.addEventListener('change', () => {
-      document.documentElement.style.fontSize = bigText.checked ? '18px' : '';
-      if (voiceToggle.checked) speak(bigText.checked ? "Large text enabled" : "Large text disabled");
-    });
+<script src="voice-control.js"></script>
+<script>
+  document.getElementById('home-btn').addEventListener('click', () => window.location.href='index.html');
+  document.getElementById('weather-btn').addEventListener('click', () => window.location.href='weather.html');
+  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');
+</script>
+</body>
+</html>
 
     contrast?.addEventListener('change', () => {
       document.body.style.filter = contrast.checked ? 'contrast(1.2)' : '';

@@ -21,6 +21,9 @@
 </header>
 
 <main id="weather-content">
+  <button id="start-voice-btn">Enable Voice Features</button>
+  <p id="voice-status">Voice status will appear here…</p>
+
   <section id="current-weather" aria-labelledby="current-heading">
     <h2 id="current-heading">Current Weather</h2>
 
@@ -60,8 +63,14 @@
 
 <script src="voice-control-weather.js"></script>
 <script src="script.js"></script>
+<script>
+  document.getElementById('home-btn').addEventListener('click', () => window.location.href='index.html');
+  document.getElementById('settings-btn').addEventListener('click', () => window.location.href='settings.html');
+  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');
+</script>
 </body>
 </html>
+
 
 
 
