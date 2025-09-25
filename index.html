@@ -12,39 +12,26 @@
   <h1>WeatherEase</h1>
   <p>Accessible, simple weather for everyone</p>
 
-  <!-- Enable Voice Button (for iPhone) -->
-  <button id="enable-voice-btn">Enable Voice Features</button>
+  <!-- Voice start button for iOS fallback -->
+  <button id="start-voice-btn">Enable Voice Features</button>
 
-  <!-- Dashboard Buttons -->
   <div class="dashboard-buttons">
-    <button class="home-button" id="get-weather-btn">Get Weather</button>
-    <button class="home-button" id="settings-btn">Settings</button>
-    <button class="home-button" id="exit-btn">Exit</button>
+    <button id="get-weather-btn">Get Weather</button>
+    <button id="settings-btn">Settings</button>
+    <button id="exit-btn">Exit</button>
   </div>
 
-  <div id="voice-status" style="margin-top:1rem; font-style:italic;">Voice status will appear here…</div>
+  <p id="voice-status" style="margin-top:1rem; font-style:italic;">Voice status will appear here…</p>
 </main>
 
 <script src="voice-control.js"></script>
-<script>
-  // Button navigation
-  document.getElementById('get-weather-btn').addEventListener('click', () => {
-    window.location.href = "weather.html";
-  });
-  document.getElementById('settings-btn').addEventListener('click', () => {
-    window.location.href = "settings.html";
-  });
-  document.getElementById('exit-btn').addEventListener('click', () => {
-    window.location.href = "exit.html";
-  });
-
-  // Start voice automatically on page load
-  window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('enable-voice-btn').click();
-  });
-</script>
 </body>
 </html>
+<script>
+  document.getElementById('get-weather-btn').addEventListener('click', () => window.location.href='weather.html');
+  document.getElementById('settings-btn').addEventListener('click', () => window.location.href='settings.html');
+  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');
+</script>
 
 
 

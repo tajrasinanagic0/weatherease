@@ -19,38 +19,51 @@
 <main>
   <button id="start-voice-btn">Enable Voice Features</button>
 
-  <form id="location-form">
-    <input type="search" id="search" placeholder="City or ZIP">
-    <button type="button" id="geo-btn">Use My Location</button>
-    <button type="submit">Submit</button>
-  </form>
+  <section>
+    <h2>Current Weather</h2>
+    <form id="location-form">
+      <input id="search" type="search" placeholder="City or ZIP">
+      <button type="button" id="geo-btn">Use My Location</button>
+    </form>
 
-  <section id="current-weather">
-    <p><strong>Location:</strong> <span data-field="place">—</span></p>
-    <p><strong>Temperature:</strong> <span data-field="temp">—</span></p>
-    <p><strong>Feels like:</strong> <span data-field="feels">—</span></p>
-    <p><strong>Condition:</strong> <span data-field="desc">—</span></p>
-    <p><strong>Humidity:</strong> <span data-field="humidity">—</span></p>
-    <p><strong>Wind:</strong> <span data-field="wind">—</span></p>
+    <div id="current-card">
+      <p><strong>Location:</strong> <span data-field="place">—</span></p>
+      <p><strong>Temperature:</strong> <span data-field="temp">—</span></p>
+      <p><strong>Feels like:</strong> <span data-field="feels">—</span></p>
+      <p><strong>Condition:</strong> <span data-field="desc">—</span></p>
+      <p><strong>Humidity:</strong> <span data-field="humidity">—</span></p>
+      <p><strong>Wind:</strong> <span data-field="wind">—</span></p>
+    </div>
+
+    <button id="get-temp-btn">Read Temperature</button>
   </section>
 
-  <section id="forecast">
+  <section>
+    <h2>5-Day Forecast</h2>
     <ul id="forecast-list">
-      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
-      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
-      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
-      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
-      <li><strong data-day>—</strong> <span data-high>—</span>/<span data-low>—</span> <span data-desc>—</span></li>
+      <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+      <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+      <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+      <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
+      <li><strong data-day>—</strong><br><span data-high>—</span> / <span data-low>—</span><br><span data-desc>—</span></li>
     </ul>
   </section>
 
-  <div id="current-status">Ready.</div>
+  <section>
+    <h2>Alerts & Tips</h2>
+    <div id="alerts-live">No active alerts.</div>
+  </section>
 </main>
 
 <script src="voice-control-weather.js"></script>
 <script src="script.js"></script>
 </body>
 </html>
+<script>
+  document.getElementById('home-btn').addEventListener('click', () => window.location.href='index.html');
+  document.getElementById('settings-btn').addEventListener('click', () => window.location.href='settings.html');
+  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');        
+</script>
 
 
 

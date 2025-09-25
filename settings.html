@@ -8,6 +8,7 @@
 </head>
 <body>
 <header>
+  <h1>WeatherEase Settings</h1>
   <nav>
     <button id="home-btn">Home</button>
     <button id="weather-btn">Weather</button>
@@ -17,56 +18,29 @@
 
 <main>
   <button id="start-voice-btn">Enable Voice Features</button>
-  <p id="voice-status">Voice status will appear here…</p>
 
-  <section aria-label="Settings and Accessibility Options">
-    <form>
-      <label><input type="checkbox" id="dark-mode"> Dark mode</label>
-      <label><input type="checkbox" id="big-text"> Use larger text</label>
-      <label><input type="checkbox" id="high-contrast"> High contrast</label>
-      <label><input type="checkbox" id="voice"> Enable voice commands</label>
-      <label>
-        Units:
-        <select id="unit-select">
-          <option value="metric">Celsius</option>
-          <option value="imperial">Fahrenheit</option>
-        </select>
-      </label>
-    </form>
-  </section>
+  <form>
+    <label><input type="checkbox" id="dark-mode"> Dark mode</label>
+    <label><input type="checkbox" id="big-text"> Large text</label>
+    <label><input type="checkbox" id="high-contrast"> High contrast</label>
+    <label><input type="checkbox" id="voice-toggle"> Enable voice commands</label>
+    <label>
+      Units:
+      <select id="unit-select">
+        <option value="metric">Celsius</option>
+        <option value="imperial">Fahrenheit</option>
+      </select>
+    </label>
+    <p id="voice-status">Voice status will appear here…</p>
+  </form>
 </main>
 
 <script src="voice-control.js"></script>
+</body>
+</html>
 <script>
   document.getElementById('home-btn').addEventListener('click', () => window.location.href='index.html');
   document.getElementById('weather-btn').addEventListener('click', () => window.location.href='weather.html');
-  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');
+  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');    
 </script>
-</body>
-</html>
-
-    contrast?.addEventListener('change', () => {
-      document.body.style.filter = contrast.checked ? 'contrast(1.2)' : '';
-      if (voiceToggle.checked) speak(contrast.checked ? "High contrast enabled" : "High contrast disabled");
-    });
-
-    voiceToggle?.addEventListener('change', () => {
-      if (voiceToggle.checked) {
-        speak("Voice commands enabled");
-        if (typeof startVoiceRecognition === 'function') startVoiceRecognition();
-      } else {
-        speak("Voice commands disabled");
-      }
-    });
-
-    unitSelect?.addEventListener('change', () => {
-      const unit = unitSelect.value === 'metric' ? "Celsius" : "Fahrenheit";
-      if (voiceToggle.checked) speak(`${unit} selected`);
-    });
-  </script>
-</body>
-</html>
-
-
-
 
