@@ -119,7 +119,7 @@ function handleCommand(cmd) {
       break;
     case '3':
     case 'condition':
-      speakCurrent('desc');
+      speakCurrent('condition');
       break;
     case '4':
     case 'humidity':
@@ -130,7 +130,7 @@ function handleCommand(cmd) {
       speakCurrent('wind');
       break;
     case '6':
-    case '5-day forecast':
+    case ' five day forecast':
       speakForecast();
       break;
     case '7':
