@@ -25,14 +25,30 @@ function speak(text) {
   const utter = new SpeechSynthesisUtterance(text);
   synth.speak(utter);
 }
-
 // ----------------------------
-// Navigation buttons
+// Navigation buttons with voice feedback
 // ----------------------------
-homeBtn?.addEventListener('click', () => { speak("Returning home"); window.location.href = "index.html"; });
-settingsBtn?.addEventListener('click', () => { speak("Opening settings"); window.location.href = "settings.html"; });
-exitBtn?.addEventListener('click', () => { speak("Closing WeatherEase"); setTimeout(()=>window.location.href="exit.html", 1000); });
 
+// Home button: go back to index.html
+homeBtn?.addEventListener('click', () => {
+  speak("Returning home");  // Speak a friendly message
+  window.location.href = "index.html";  // Navigate to home page
+});
+
+// Settings button: open settings page
+settingsBtn?.addEventListener('click', () => {
+  speak("Opening settings");  // Speak instructions
+  window.location.href = "settings.html";  // Navigate to settings
+});
+
+// Exit button: go to exit page
+exitBtn?.addEventListener('click', () => {
+  speak("Closing WeatherEase");  // Announce app is closing
+  setTimeout(() => {
+    // After 1 second, go to exit.html
+    window.location.href = "exit.html";
+  }, 1000);
+});
 // ----------------------------
 // Enable voice button
 // ----------------------------
