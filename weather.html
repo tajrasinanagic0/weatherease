@@ -8,7 +8,6 @@
 </head>
 <body>
 <header>
-  <!-- Weather page header with navigation -->
   <h1>WeatherEase</h1>
   <nav>
     <button id="home-btn">Home</button>
@@ -19,13 +18,11 @@
 </header>
 
 <main>
-  <!-- Current weather section -->
   <section>
     <h2>Current Weather</h2>
     <button id="geo-btn">Use My Location</button>
 
     <div id="current-card">
-      <!-- Display all current weather data here -->
       <p><strong>Location:</strong> <span data-field="place">—</span></p>
       <p><strong>Temperature:</strong> <span data-field="temp">—</span></p>
       <p><strong>Feels like:</strong> <span data-field="feels">—</span></p>
@@ -34,15 +31,12 @@
       <p><strong>Wind:</strong> <span data-field="wind">—</span></p>
     </div>
 
-    <!-- Status messages (like "Weather updated") will appear here -->
     <div id="current-status" aria-live="polite">Ready.</div>
   </section>
 
-  <!-- 5-Day Forecast Section -->
   <section>
     <h2>5-Day Forecast</h2>
     <ul id="forecast-list">
-      <!-- Each day forecast -->
       <li class="day"><strong data-day>—</strong>, <span data-high>—</span>/<span data-low>—</span>, <span data-desc>—</span></li>
       <li class="day"><strong data-day>—</strong>, <span data-high>—</span>/<span data-low>—</span>, <span data-desc>—</span></li>
       <li class="day"><strong data-day>—</strong>, <span data-high>—</span>/<span data-low>—</span>, <span data-desc>—</span></li>
@@ -52,7 +46,9 @@
   </section>
 </main>
 
-<!-- Link to JS that handles weather voice, API, and navigation -->
-<script src="voice-control.js"></script>
+<!-- Include weather JS -->
+<script src="script.js"></script>
+<script src="voice-control-weather.js"></script>
 </body>
 </html>
+
