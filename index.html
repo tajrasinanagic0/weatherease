@@ -8,22 +8,28 @@
 </head>
 <body>
 <main class="home-screen">
+  <!-- App title and tagline -->
   <h1>WeatherEase</h1>
   <p>Accessible, simple weather for everyone</p>
 
-  <!-- Enable voice button -->
+  <!-- Button to enable voice commands -->
   <button id="start-voice-btn">Start Voice Features</button>
 
+  <!-- Main dashboard buttons for navigation -->
   <div class="dashboard-buttons">
     <button id="get-weather-btn">Get Weather</button>
     <button id="settings-btn">Settings</button>
     <button id="exit-btn">Exit</button>
   </div>
 
-  <div id="voice-status" style="margin-top:1rem; font-style:italic;">Voice status will appear here…</div>
+  <!-- Voice status updates will appear here -->
+  <div id="voice-status" style="margin-top:1rem; font-style:italic;">
+    Voice status will appear here…
+  </div>
 </main>
 
-<script src="voice-control.js"></script>
+<!-- Link to JS that handles home page voice and button navigation -->
+<script src="home-voice.js"></script>
 </body>
 </html>
 

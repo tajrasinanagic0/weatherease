@@ -9,14 +9,21 @@
 <body>
 <h1>Thank you for using WeatherEase!</h1>
 <p>Closing app now…</p>
+
+<!-- Speak a friendly farewell and then return to home page -->
 <script>
 const synth = window.speechSynthesis;
-const utter = new SpeechSynthesisUtterance("Thank you for using WeatherEase, your easy breezy forecast! Closing app now.");
+const utter = new SpeechSynthesisUtterance(
+  "Thank you for using WeatherEase, your easy breezy forecast! Closing app now."
+);
 synth.speak(utter);
-setTimeout(()=>{ window.location.href="index.html"; }, 3000);
+
+// Redirect back to home after 3 seconds
+setTimeout(() => { window.location.href="index.html"; }, 3000);
 </script>
 </body>
 </html>
+
 
 
 
