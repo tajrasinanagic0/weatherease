@@ -143,14 +143,19 @@ function handleCommand(cmd) {
 // Speak current weather field
 // ----------------------------
 function speakCurrent(field) {
-  if(!weatherDataReady) {
-    speak("Current weather data is not ready yet. Please wait a moment and try again.");
+  const el = document.querySelector(`[data-field="${field}"]`);
+  if(!el) {
+    speak(`${field} not available`);
     return;
   }
 
-  const el = document.querySelector(`[data-field="${field}"]`);
-  if(el && el.textContent && el.textContent !== '—') speak(`${field.replace('-', ' ')} is ${el.textContent}`);
-  else speak(`${field} not available`);
+  // Check if content is still placeholder
+  if(el.textContent === '—' || el.textContent.trim() === '') {
+    speak(`${field} not available yet. Please press 'Use My Location' or wait a moment.`);
+    return;
+  }
+
+  speak(`${field.replace('-', ' ')} is ${el.textContent}`);
 }
 
 // ----------------------------
