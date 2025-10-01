@@ -278,11 +278,28 @@ body.dark-mode {
         outline: 2px solid #fff;
         outline-offset: 2px;
     }
+/* Dark mode */
+body.dark-mode {
+  background-color: #0f172a;
+  color: #ffffff;
+}
 
+/* Large text */
+body.large-text {
+  font-size: 1.25rem;
+}
+
+/* High contrast */
+body.high-contrast {
+  background-color: #000000;
+  color: #ffff00;
+}
 /* added background image */
-    #current-card {
-  /* background-image: url("https://images.unsplash.com/photo-1501630834273-4b5604d2ee31");  */
-  background-image: url("https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889");
-  background-size: cover;
+#current-card {
+  padding: 1.5rem;
+  border-radius: 15px;
+  background: rgba(0,0,0,0.6);
   color: #fff;
+  max-width: 400px;
+  margin: 1rem auto;
 }

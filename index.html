@@ -4,15 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WeatherEase — Home</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <main class="home-screen">
   <h1>WeatherEase</h1>
   <p>Accessible, simple weather for everyone</p>
-
-  <!-- Start Voice Features button -->
-  <button id="start-voice-btn">Start Voice Features</button>
 
   <!-- Dashboard buttons -->
   <div class="dashboard-buttons">
@@ -26,8 +23,45 @@
 
 <!-- Home page JS -->
 <script src="voice-control.js"></script>
+<script>
+  // Auto-start voice recognition if permissions granted
+  window.addEventListener('DOMContentLoaded', () => {
+    const startVoiceBtn = document.getElementById('start-voice-btn');
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const synth = window.speechSynthesis;
+      let recognition;
+      function speak(text) {
+        if (synth.speaking) synth.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        synth.speak(utter);
+      }
+
+      // Start recognition automatically
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => {
+          const command = event.results[0][0].transcript.trim().toLowerCase();
+          switch(command){
+            case '1': case 'get weather': window.location.href = "weather.html"; break;
+            case '2': case 'settings': window.location.href = "settings.html"; break;
+            case '9': case 'exit': window.location.href = "exit.html"; break;
+          }
+        };
+
+        recognition.onend = () => recognition.start();
+        recognition.start();
+      }
+    }
+  });
+</script>
 </body>
 </html>
+
 
 
 

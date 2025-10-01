@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WeatherEase — Settings</title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <header>
-  <!-- Settings header with navigation -->
   <h1>WeatherEase Settings</h1>
   <nav>
     <button id="home-btn">Home</button>
@@ -18,15 +17,10 @@
 </header>
 
 <main>
-  <!-- Button to enable voice features -->
-  <button id="start-voice-btn">Enable Voice Features</button>
-
-  <!-- Form for settings -->
   <form>
     <label><input type="checkbox" id="dark-mode"> Dark mode</label>
     <label><input type="checkbox" id="big-text"> Large text</label>
     <label><input type="checkbox" id="high-contrast"> High contrast</label>
-    <label><input type="checkbox" id="voice-toggle"> Enable voice commands</label>
     <label>
       Units:
       <select id="unit-select">
@@ -34,18 +28,25 @@
         <option value="imperial">Fahrenheit</option>
       </select>
     </label>
-    <p id="voice-status">Voice status will appear here…</p>
   </form>
 </main>
+
+<script>
+  // Navigation
+  document.getElementById('home-btn').addEventListener('click', () => window.location.href='index.html');
+  document.getElementById('weather-btn').addEventListener('click', () => window.location.href='weather.html');
+  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');
+
+  // Settings toggles
+  const dark = document.getElementById('dark-mode');
+  const large = document.getElementById('big-text');
+  const contrast = document.getElementById('high-contrast');
+
+  dark.addEventListener('change', () => document.body.classList.toggle('dark-mode', dark.checked));
+  large.addEventListener('change', () => document.body.classList.toggle('large-text', large.checked));
+  contrast.addEventListener('change', () => document.body.classList.toggle('high-contrast', contrast.checked));
+</script>
 </body>
 </html>
 
-<script src="voice-control.js"></script>
-</body>
-</html>
-<script>
-  document.getElementById('home-btn').addEventListener('click', () => window.location.href='index.html');
-  document.getElementById('weather-btn').addEventListener('click', () => window.location.href='weather.html');
-  document.getElementById('exit-btn').addEventListener('click', () => window.location.href='exit.html');    
-</script>
 
