@@ -2,11 +2,11 @@
     --max-w: 1100px;
     --brand: #03a9f4; /* light blue for header/buttons */
     --brand-dark: #0288d1; /* darker blue for hover effects */
-    --light-bg: #e0f7fa; /* very light blue background for cards */
-    --card-border: #b2ebf2; /* subtle border matching the theme */
+    --light-bg: #e0f7fa; /* light background */
+    --card-border: #b2ebf2;
 }
 
-/* Reset & Box-sizing */
+/* Reset */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -25,11 +25,11 @@ body {
 header {
     background: var(--brand);
     color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 header h1 {
@@ -38,9 +38,20 @@ header h1 {
 
 header nav button {
     margin-left: 0.5rem;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
 }
 
-/* Layout */
+header nav button:hover {
+    background: var(--brand-dark);
+}
+
+/* Main layout */
 main {
     max-width: var(--max-w);
     margin: 2rem auto;
@@ -55,8 +66,9 @@ main {
     }
 }
 
+/* Sections & cards */
 section, article, aside {
-    background: #ffffff;
+    background: #fff;
     border: 1px solid var(--card-border);
     border-radius: 15px;
     padding: 1.5rem;
@@ -68,7 +80,7 @@ h2 {
     color: var(--brand-dark);
 }
 
-/* Forms & Inputs */
+/* Forms & inputs */
 form {
     display: flex;
     flex-wrap: wrap;
@@ -88,20 +100,22 @@ input:focus, select:focus {
     outline-offset: 2px;
 }
 
-/* Buttons */
-button {
-    background: var(--brand);
+/* Current weather card */
+#current-card {
+    padding: 2rem;
+    border-radius: 20px;
+    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                url("https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889");
+    background-size: cover;
+    background-position: center;
     color: #fff;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s ease, transform 0.2s ease;
+    max-width: 500px;
+    margin: 1rem auto;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-button:hover {
-    background: var(--brand-dark);
-}
-
-/* Forecast Grid */
+/* Forecast list */
 #forecast-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -122,28 +136,6 @@ button:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-/* Current weather card */
-#current-card {
-    padding: 2rem;
-    border-radius: 20px;
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                url("https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889");
-    background-size: cover;
-    background-position: center;
-    color: #fff;
-    max-width: 500px;
-    margin: 1rem auto;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-/* Current status */
-#current-status {
-    margin-top: 1rem;
-    font-weight: 600;
-    text-align: center;
-}
-
 /* Footer */
 footer {
     background: #0b1020;
@@ -159,6 +151,19 @@ body.dark-mode {
     color: #ffffff;
 }
 
+body.dark-mode header {
+    background: #1c1c1c;
+}
+
+body.dark-mode header nav button {
+    background: #0288d1;
+    color: #fff;
+}
+
+body.dark-mode header nav button:hover {
+    background: #03a9f4;
+}
+
 /* Large text */
 body.large-text {
     font-size: 1.25rem;
@@ -166,8 +171,23 @@ body.large-text {
 
 /* High contrast */
 body.high-contrast {
-    background-color: #000000;
+    background-color: #000;
     color: #ffff00;
+}
+
+body.high-contrast header {
+    background: #000;
+}
+
+body.high-contrast header nav button {
+    background: #000;
+    color: #ffff00;
+    border: 1px solid #ffff00;
+}
+
+body.high-contrast header nav button:hover {
+    background: #ffff00;
+    color: #000;
 }
 
 /* Dashboard buttons */
@@ -203,7 +223,7 @@ body.high-contrast {
     transform: scale(0.98);
 }
 
-/* Geo button & search row */
+/* Geo button */
 .icon-btn {
     display: inline-grid;
     place-items: center;
@@ -212,7 +232,7 @@ body.high-contrast {
     border: 0;
     border-radius: 10px;
     background: #0bb2ff;
-    color: #ffffff;
+    color: #fff;
     cursor: pointer;
     box-shadow: 0 1px 2px rgba(0,0,0,0.08);
     transition: transform .06s ease, filter .2s ease;
