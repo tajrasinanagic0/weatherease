@@ -3,9 +3,7 @@ const synth = window.speechSynthesis;
 
 let recognition;
 let voiceEnabled = false;
-const currentCard = document.getElementById('current-card');
 let weatherDataReady = false; // track if weather info is loaded
-
 
 // DOM elements
 const geoBtn = document.getElementById('geo-btn');
@@ -87,7 +85,7 @@ function startRecognition() {
 // Command handler
 // ----------------------------
 function handleCommand(cmd) {
-  if(!weatherDataReady) { speak("Weather not ready yet."); return; }
+  if(!weatherDataReady) { speak("Weather not ready yet. Please press 'Use My Location'."); return; }
 
   switch(cmd) {
     case 'one':
@@ -115,10 +113,6 @@ function handleCommand(cmd) {
 // Speak current weather
 // ----------------------------
 function speakCurrent(field) {
-  if(!weatherDataReady) {
-    speak("Weather information not loaded yet. Please wait a moment.");
-    return;
-  }
   const el = document.querySelector(`[data-field="${field}"]`);
   if(el && el.textContent && el.textContent !== '—') {
     speak(`${field.replace('-', ' ')} is ${el.textContent}`);
@@ -152,19 +146,12 @@ async function fetchWeather(lat, lon) {
     const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
     const data = await resp.json();
 
-    const placeEl = document.querySelector('[data-field="place"]');
-    const tempEl = document.querySelector('[data-field="temp"]');
-    const feelsEl = document.querySelector('[data-field="feels"]');
-    const descEl = document.querySelector('[data-field="desc"]');
-    const humidityEl = document.querySelector('[data-field="humidity"]');
-    const windEl = document.querySelector('[data-field="wind"]');
-
-    if(placeEl) placeEl.textContent = `${data.name}, ${data.sys.country}`;
-    if(tempEl) tempEl.textContent = Math.round(data.main.temp) + '°C';
-    if(feelsEl) feelsEl.textContent = Math.round(data.main.feels_like) + '°C';
-    if(descEl) descEl.textContent = data.weather[0].description;
-    if(humidityEl) humidityEl.textContent = data.main.humidity + '%';
-    if(windEl) windEl.textContent = data.wind.speed + ' m/s';
+    document.querySelector('[data-field="place"]')?.textContent = `${data.name}, ${data.sys.country}`;
+    document.querySelector('[data-field="temp"]')?.textContent = Math.round(data.main.temp) + '°C';
+    document.querySelector('[data-field="feels"]')?.textContent = Math.round(data.main.feels_like) + '°C';
+    document.querySelector('[data-field="desc"]')?.textContent = data.weather[0].description;
+    document.querySelector('[data-field="humidity"]')?.textContent = data.main.humidity + '%';
+    document.querySelector('[data-field="wind"]')?.textContent = data.wind.speed + ' m/s';
 
     weatherDataReady = true;
 
@@ -194,12 +181,16 @@ async function fetchForecast(lat, lon) {
 
     for(let i = 0; i < 5; i++) {
       const item = listItems[i];
-      const dayData = data.list[i*8]; // roughly 24h interval
+      const dayData = data.list[i*8];
       if(!dayData) continue;
 
+      item.querySelector('[data-day]')?.setAttribute('data-day','day');
       item.querySelector('[data-day]').textContent = new Date(dayData.dt_txt).toLocaleDateString('en-US', { weekday: 'short' });
+      item.querySelector('[data-high]')?.setAttribute('data-high','high');
       item.querySelector('[data-high]').textContent = Math.round(dayData.main.temp_max) + '°C';
+      item.querySelector('[data-low]')?.setAttribute('data-low','low');
       item.querySelector('[data-low]').textContent = Math.round(dayData.main.temp_min) + '°C';
+      item.querySelector('[data-desc]')?.setAttribute('data-desc','desc');
       item.querySelector('[data-desc]').textContent = dayData.weather[0].description;
     }
 
@@ -213,12 +204,14 @@ async function fetchForecast(lat, lon) {
 // ----------------------------
 geoBtn?.addEventListener('click', () => {
   if(!navigator.geolocation) { speak("Geolocation not supported."); return; }
+  speak("Please allow location access to get weather");
   navigator.geolocation.getCurrentPosition(pos => {
     fetchWeather(pos.coords.latitude, pos.coords.longitude);
   }, err => {
     speak("Unable to retrieve location.");
     console.error(err);
-  });
+  }, { enableHighAccuracy: true, timeout: 10000 });
 });
+
 
 
