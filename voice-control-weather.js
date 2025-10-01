@@ -6,6 +6,7 @@ const synth = window.speechSynthesis;
 
 let recognition;           // For voice recognition
 let voiceEnabled = false;  // Track if voice commands are active
+let weatherDataReady = false; // Track if current weather is loaded
 
 // DOM elements
 const geoBtn = document.getElementById('geo-btn');
@@ -15,6 +16,7 @@ const homeBtn = document.getElementById('home-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const exitBtn = document.getElementById('exit-btn');
 const voiceBtn = document.getElementById('enable-voice-btn');
+const currentCard = document.getElementById('current-card');
 
 // ----------------------------
 // Speak function
@@ -25,30 +27,25 @@ function speak(text) {
   const utter = new SpeechSynthesisUtterance(text);
   synth.speak(utter);
 }
+
 // ----------------------------
 // Navigation buttons with voice feedback
 // ----------------------------
-
-// Home button: go back to index.html
 homeBtn?.addEventListener('click', () => {
-  speak("Returning home");  // Speak a friendly message
-  window.location.href = "index.html";  // Navigate to home page
+  speak("Returning home");
+  window.location.href = "index.html";
 });
 
-// Settings button: open settings page
 settingsBtn?.addEventListener('click', () => {
-  speak("Opening settings");  // Speak instructions
-  window.location.href = "settings.html";  // Navigate to settings
+  speak("Opening settings");
+  window.location.href = "settings.html";
 });
 
-// Exit button: go to exit page
 exitBtn?.addEventListener('click', () => {
-  speak("Closing WeatherEase");  // Announce app is closing
-  setTimeout(() => {
-    // After 1 second, go to exit.html
-    window.location.href = "exit.html";
-  }, 1000);
+  speak("Closing WeatherEase");
+  setTimeout(() => window.location.href = "exit.html", 1000);
 });
+
 // ----------------------------
 // Enable voice button
 // ----------------------------
@@ -104,7 +101,6 @@ function startRecognition() {
     speak("Error in voice recognition: " + event.error);
   };
 
-  // Keep listening continuously
   recognition.onend = () => { if(voiceEnabled) recognition.start(); };
 }
 
@@ -147,6 +143,11 @@ function handleCommand(cmd) {
 // Speak current weather field
 // ----------------------------
 function speakCurrent(field) {
+  if(!weatherDataReady) {
+    speak("Current weather data is not ready yet. Please wait a moment and try again.");
+    return;
+  }
+
   const el = document.querySelector(`[data-field="${field}"]`);
   if(el && el.textContent && el.textContent !== '—') speak(`${field.replace('-', ' ')} is ${el.textContent}`);
   else speak(`${field} not available`);
@@ -176,15 +177,23 @@ async function fetchWeather(lat, lon) {
   try {
     const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
     const data = await resp.json();
+
     document.querySelector('[data-field="place"]').textContent = `${data.name}, ${data.sys.country}`;
     document.querySelector('[data-field="temp"]').textContent = Math.round(data.main.temp) + '°C';
     document.querySelector('[data-field="feels"]').textContent = Math.round(data.main.feels_like) + '°C';
     document.querySelector('[data-field="desc"]').textContent = data.weather[0].description;
     document.querySelector('[data-field="humidity"]').textContent = data.main.humidity + '%';
     document.querySelector('[data-field="wind"]').textContent = data.wind.speed + ' m/s';
+
+    weatherDataReady = true;
     if(currentStatus) currentStatus.textContent = "Weather updated.";
     fetchForecast(lat, lon);
+
+    // Ensure background Figma card shows
+    if(currentCard) currentCard.style.backgroundImage = "url('https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889')";
+
   } catch(e) {
+    weatherDataReady = false;
     speak("Error fetching weather data. Make sure location is enabled.");
     console.error(e);
   }
@@ -198,6 +207,7 @@ async function fetchForecast(lat, lon) {
     const resp = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
     const data = await resp.json();
     const days = [...forecastList.querySelectorAll('li')];
+
     for(let i=0; i<days.length; i++) {
       const dayData = data.list[i*8]; // every 8th item = next day
       days[i].querySelector('[data-day]').textContent = new Date(dayData.dt * 1000).toLocaleDateString('en-US', { weekday: 'long' });
@@ -225,3 +235,4 @@ geoBtn?.addEventListener('click', () => {
     { enableHighAccuracy: true, timeout: 10000 }
   );
 });
+
