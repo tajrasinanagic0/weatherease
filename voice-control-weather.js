@@ -183,19 +183,32 @@ async function fetchWeather(lat, lon) {
     const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
     const data = await resp.json();
 
-    document.querySelector('[data-field="place"]').textContent = `${data.name}, ${data.sys.country}`;
-    document.querySelector('[data-field="temp"]').textContent = Math.round(data.main.temp) + '°C';
-    document.querySelector('[data-field="feels"]').textContent = Math.round(data.main.feels_like) + '°C';
-    document.querySelector('[data-field="desc"]').textContent = data.weather[0].description;
-    document.querySelector('[data-field="humidity"]').textContent = data.main.humidity + '%';
-    document.querySelector('[data-field="wind"]').textContent = data.wind.speed + ' m/s';
+    const placeEl = document.querySelector('[data-field="place"]');
+    const tempEl = document.querySelector('[data-field="temp"]');
+    const feelsEl = document.querySelector('[data-field="feels"]');
+    const descEl = document.querySelector('[data-field="desc"]');
+    const humidityEl = document.querySelector('[data-field="humidity"]');
+    const windEl = document.querySelector('[data-field="wind"]');
 
-    weatherDataReady = true;
-    if(currentStatus) currentStatus.textContent = "Weather updated.";
+    // Update DOM
+    placeEl.textContent = `${data.name}, ${data.sys.country}`;
+    tempEl.textContent = Math.round(data.main.temp) + '°C';
+    feelsEl.textContent = Math.round(data.main.feels_like) + '°C';
+    descEl.textContent = data.weather[0].description;
+    humidityEl.textContent = data.main.humidity + '%';
+    windEl.textContent = data.wind.speed + ' m/s';
+
+    // Delay to ensure iOS updates the DOM before speaking
+    setTimeout(() => {
+      weatherDataReady = true;
+      if(currentStatus) currentStatus.textContent = "Weather updated.";
+    }, 100);
+
     fetchForecast(lat, lon);
 
     // Ensure background Figma card shows
-    if(currentCard) currentCard.style.backgroundImage = "url('https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889')";
+    if(currentCard) currentCard.style.backgroundImage = 
+      "url('https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889')";
 
   } catch(e) {
     weatherDataReady = false;
