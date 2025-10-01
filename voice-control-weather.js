@@ -3,7 +3,7 @@ const synth = window.speechSynthesis;
 
 let recognition;
 let voiceEnabled = false;
-let weatherDataReady = false; // track if weather info is loaded
+let weatherDataReady = false;
 
 // DOM elements
 const geoBtn = document.getElementById('geo-btn');
@@ -85,7 +85,7 @@ function startRecognition() {
 // Command handler
 // ----------------------------
 function handleCommand(cmd) {
-  if(!weatherDataReady) { speak("Weather not ready yet. Please press 'Use My Location'."); return; }
+  if(!weatherDataReady) { speak("Weather not ready yet."); return; }
 
   switch(cmd) {
     case 'one':
@@ -114,11 +114,8 @@ function handleCommand(cmd) {
 // ----------------------------
 function speakCurrent(field) {
   const el = document.querySelector(`[data-field="${field}"]`);
-  if(el && el.textContent && el.textContent !== '—') {
-    speak(`${field.replace('-', ' ')} is ${el.textContent}`);
-  } else {
-    speak(`${field} not available`);
-  }
+  if(el && el.textContent && el.textContent !== '—') speak(`${field.replace('-', ' ')} is ${el.textContent}`);
+  else speak(`${field} not available`);
 }
 
 // ----------------------------
@@ -146,20 +143,30 @@ async function fetchWeather(lat, lon) {
     const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
     const data = await resp.json();
 
-    document.querySelector('[data-field="place"]')?.textContent = `${data.name}, ${data.sys.country}`;
-    document.querySelector('[data-field="temp"]')?.textContent = Math.round(data.main.temp) + '°C';
-    document.querySelector('[data-field="feels"]')?.textContent = Math.round(data.main.feels_like) + '°C';
-    document.querySelector('[data-field="desc"]')?.textContent = data.weather[0].description;
-    document.querySelector('[data-field="humidity"]')?.textContent = data.main.humidity + '%';
-    document.querySelector('[data-field="wind"]')?.textContent = data.wind.speed + ' m/s';
+    const fields = {
+      place: document.querySelector('[data-field="place"]'),
+      temp: document.querySelector('[data-field="temp"]'),
+      feels: document.querySelector('[data-field="feels"]'),
+      desc: document.querySelector('[data-field="desc"]'),
+      humidity: document.querySelector('[data-field="humidity"]'),
+      wind: document.querySelector('[data-field="wind"]')
+    };
 
-    weatherDataReady = true;
+    fields.place.textContent = `${data.name}, ${data.sys.country}`;
+    fields.temp.textContent = Math.round(data.main.temp) + '°C';
+    fields.feels.textContent = Math.round(data.main.feels_like) + '°C';
+    fields.desc.textContent = data.weather[0].description;
+    fields.humidity.textContent = data.main.humidity + '%';
+    fields.wind.textContent = data.wind.speed + ' m/s';
 
-    if(currentStatus) currentStatus.textContent = "Weather updated.";
+    // Force iOS repaint
+    requestAnimationFrame(() => {
+      weatherDataReady = true;
+      if(currentStatus) currentStatus.textContent = "Weather updated.";
 
-    if(currentCard) {
-      currentCard.style.backgroundImage = "url('https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889')";
-    }
+      if(currentCard) currentCard.style.backgroundImage =
+        "url('https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889')";
+    });
 
     fetchForecast(lat, lon);
 
@@ -181,16 +188,12 @@ async function fetchForecast(lat, lon) {
 
     for(let i = 0; i < 5; i++) {
       const item = listItems[i];
-      const dayData = data.list[i*8];
+      const dayData = data.list[i*8]; // roughly 24h interval
       if(!dayData) continue;
 
-      item.querySelector('[data-day]')?.setAttribute('data-day','day');
       item.querySelector('[data-day]').textContent = new Date(dayData.dt_txt).toLocaleDateString('en-US', { weekday: 'short' });
-      item.querySelector('[data-high]')?.setAttribute('data-high','high');
       item.querySelector('[data-high]').textContent = Math.round(dayData.main.temp_max) + '°C';
-      item.querySelector('[data-low]')?.setAttribute('data-low','low');
       item.querySelector('[data-low]').textContent = Math.round(dayData.main.temp_min) + '°C';
-      item.querySelector('[data-desc]')?.setAttribute('data-desc','desc');
       item.querySelector('[data-desc]').textContent = dayData.weather[0].description;
     }
 
@@ -204,14 +207,12 @@ async function fetchForecast(lat, lon) {
 // ----------------------------
 geoBtn?.addEventListener('click', () => {
   if(!navigator.geolocation) { speak("Geolocation not supported."); return; }
-  speak("Please allow location access to get weather");
   navigator.geolocation.getCurrentPosition(pos => {
     fetchWeather(pos.coords.latitude, pos.coords.longitude);
   }, err => {
     speak("Unable to retrieve location.");
     console.error(err);
-  }, { enableHighAccuracy: true, timeout: 10000 });
+  });
 });
-
 
 
