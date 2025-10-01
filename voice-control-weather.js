@@ -3,7 +3,9 @@ const synth = window.speechSynthesis;
 
 let recognition;
 let voiceEnabled = false;
-let weatherDataReady = false;
+const currentCard = document.getElementById('current-card');
+let weatherDataReady = false; // track if weather info is loaded
+
 
 // DOM elements
 const geoBtn = document.getElementById('geo-btn');
@@ -113,9 +115,16 @@ function handleCommand(cmd) {
 // Speak current weather
 // ----------------------------
 function speakCurrent(field) {
+  if(!weatherDataReady) {
+    speak("Weather information not loaded yet. Please wait a moment.");
+    return;
+  }
   const el = document.querySelector(`[data-field="${field}"]`);
-  if(el && el.textContent && el.textContent !== '—') speak(`${field.replace('-', ' ')} is ${el.textContent}`);
-  else speak(`${field} not available`);
+  if(el && el.textContent && el.textContent !== '—') {
+    speak(`${field.replace('-', ' ')} is ${el.textContent}`);
+  } else {
+    speak(`${field} not available`);
+  }
 }
 
 // ----------------------------
@@ -143,30 +152,27 @@ async function fetchWeather(lat, lon) {
     const resp = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${API_KEY}`);
     const data = await resp.json();
 
-    const fields = {
-      place: document.querySelector('[data-field="place"]'),
-      temp: document.querySelector('[data-field="temp"]'),
-      feels: document.querySelector('[data-field="feels"]'),
-      desc: document.querySelector('[data-field="desc"]'),
-      humidity: document.querySelector('[data-field="humidity"]'),
-      wind: document.querySelector('[data-field="wind"]')
-    };
+    const placeEl = document.querySelector('[data-field="place"]');
+    const tempEl = document.querySelector('[data-field="temp"]');
+    const feelsEl = document.querySelector('[data-field="feels"]');
+    const descEl = document.querySelector('[data-field="desc"]');
+    const humidityEl = document.querySelector('[data-field="humidity"]');
+    const windEl = document.querySelector('[data-field="wind"]');
 
-    fields.place.textContent = `${data.name}, ${data.sys.country}`;
-    fields.temp.textContent = Math.round(data.main.temp) + '°C';
-    fields.feels.textContent = Math.round(data.main.feels_like) + '°C';
-    fields.desc.textContent = data.weather[0].description;
-    fields.humidity.textContent = data.main.humidity + '%';
-    fields.wind.textContent = data.wind.speed + ' m/s';
+    if(placeEl) placeEl.textContent = `${data.name}, ${data.sys.country}`;
+    if(tempEl) tempEl.textContent = Math.round(data.main.temp) + '°C';
+    if(feelsEl) feelsEl.textContent = Math.round(data.main.feels_like) + '°C';
+    if(descEl) descEl.textContent = data.weather[0].description;
+    if(humidityEl) humidityEl.textContent = data.main.humidity + '%';
+    if(windEl) windEl.textContent = data.wind.speed + ' m/s';
 
-    // Force iOS repaint
-    requestAnimationFrame(() => {
-      weatherDataReady = true;
-      if(currentStatus) currentStatus.textContent = "Weather updated.";
+    weatherDataReady = true;
 
-      if(currentCard) currentCard.style.backgroundImage =
-        "url('https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889')";
-    });
+    if(currentStatus) currentStatus.textContent = "Weather updated.";
+
+    if(currentCard) {
+      currentCard.style.backgroundImage = "url('https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15788040/20150428-cloud-computing.0.1489222360.jpg?quality=90&strip=all&crop=0,5.5555555555556,100,88.888888888889')";
+    }
 
     fetchForecast(lat, lon);
 
